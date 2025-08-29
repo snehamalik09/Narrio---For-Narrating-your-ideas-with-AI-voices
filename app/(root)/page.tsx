@@ -2,43 +2,18 @@
 
 import PodcastCard from "@/components/PodcastCard";
 import {useEffect, useState} from 'react';
+import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation } from "@/store/api/podcastApi";
 
 
 const Home = () => {
-    const [podcastData, setPodcastData] = useState([]);
 
-    useEffect(()=>{
-        async function fetchData(){
-            const res = await fetch('/api/podcast');
-            const data = await res.json();
-            setPodcastData(data);
-        }
-        fetchData();
-    }, [])
+    const { data: podcastData, isLoading, error, refetch } = useGetPodcastsQuery();
+    const [createPodcast] = useCreatePodcastMutation();
+    const [deletePodcast] = useDeletePodcastMutation();
 
     useEffect(()=>{
         console.log('podcast data is : ', podcastData);
     }, [podcastData])
-
-    useEffect(()=>{
-        async function sendData(){
-            const body = {
-                podcastTitle:'Test', 
-                podcastDescription:'test desc', 
-                imgUrl:'/images/bg-img.png'
-            };
-            const req = await fetch('/api/podcast',{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json',
-                },
-                body:JSON.stringify(body)
-            });
-            const res = await req.json();
-            console.log("response from api : ", res);
-        }
-        sendData();
-    },[]);
 
     return (
         <div className="flex flex-col gap-9">
@@ -46,7 +21,7 @@ const Home = () => {
             <div className='podcast_grid'>
             {podcastData?.map((data, index) => {
                 return (
-                    <PodcastCard key={index} title={data.podcastTitle} description={data.podcastDescription} imgurl = {data.imgUrl} podcastID={data._id} />
+                    <PodcastCard key={data._id} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
                 )
             })}
             </div>

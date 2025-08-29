@@ -1,27 +1,14 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-
-export interface IPodcast extends Document {
-  podcastTitle: string;
-  podcastDescription: string;
-  imgUrl?: string;
-  audioUrl?: string;
-  author?: string;
-  authorID?: string;
-  authorImgUrl?: string;
-  voicePrompt?: string;
-  imagePrompt?: string;
-  voiceType?: string;
-  audioDuration?: number;
-  views?: number;
-  user?: mongoose.Schema.Types.ObjectId;
-}
+import { IPodcast } from "@/types";
 
 const PodcastSchema: Schema = new Schema(
   {
     podcastTitle: { type: String, required: true },
     podcastDescription: { type: String, required: true },
     imgUrl: { type: String },
+    imgStorageID: { type: String },
     audioUrl: { type: String },
+    audioStorageID: { type: String },
     author: { type: String },
     authorID: { type: String },
     authorImgUrl: { type: String },

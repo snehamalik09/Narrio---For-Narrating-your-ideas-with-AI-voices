@@ -1,4 +1,3 @@
-// import { getDB } from "@/lib/getDB";
 import { NextResponse } from "next/server";
 import Podcast from "@/models/Podcast.model";
 import { connectDB } from "@/lib/mongodb";
@@ -27,3 +26,5 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed to create podcast" }, { status: 400 });
     }
 }
+
+
