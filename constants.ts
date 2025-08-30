@@ -10,6 +10,10 @@ export const voiceDetails = [
     id: 1,
     name: "Kore",
   },
+  {
+    id: 2,
+    name: "Archener",
+  },
 ];
 
 

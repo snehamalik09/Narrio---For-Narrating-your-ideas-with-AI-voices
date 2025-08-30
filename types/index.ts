@@ -35,3 +35,11 @@ export interface IGeneratePodcastProps {
   audio: string;
   voiceType: string; 
 }
+
+export interface IGenerateImageProps {
+  setImgUrl: React.Dispatch<React.SetStateAction<string>>;
+  imgPrompt: string;
+  imgUrl: string;
+  setImgPrompt: React.Dispatch<React.SetStateAction<string>>;
+  setImgStorageID: React.Dispatch<React.SetStateAction<string>>;
+}

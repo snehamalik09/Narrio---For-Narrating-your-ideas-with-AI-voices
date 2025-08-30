@@ -82,11 +82,11 @@ html {
     @apply sticky left-0 top-0 flex w-[310px] flex-col  justify-between  border-none py-[20px] max-md:hidden lg:w-[270px]; /*  bg-black-1 text-white-1 */  
   }
 
-  @utility generate_thumbnail {
+  /* @utility generate_thumbnail {
     @apply mt-[30px] flex w-full max-w-[520px] flex-col justify-between gap-2 rounded-lg border px-2.5 py-2 md:flex-row md:gap-0; /*  bg-black-1 */  
-  }
+  /* }  */
    @utility image_div {
-    @apply flex-center mt-5 h-[142px] w-full cursor-pointer flex-col gap-3 rounded-xl border-[3.2px] border-dashed; /*  bg-black-1 */  
+    @apply flex-center !mt-[30px] h-[142px] w-full cursor-pointer flex-col gap-3 rounded-xl border-[3.2px] border-dashed; /*  bg-black-1 */  
   }
   @utility carousel_box {
     @apply relative flex h-fit aspect-square w-full flex-none cursor-pointer flex-col justify-end rounded-xl border-none;

@@ -41,7 +41,18 @@ export const podcastApi = createApi({
       }),
     }),
 
+    generateThumbnail: builder.mutation<
+      { base64: string; },  // response type
+      {imgPrompt: string } // request type
+    >({
+      query: (body) => ({
+        url: 'generateTTT',
+        method: 'POST',
+        body,
+      }),
+    }),
+
   }),
 })
 
-export const { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation } = podcastApi
+export const { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi

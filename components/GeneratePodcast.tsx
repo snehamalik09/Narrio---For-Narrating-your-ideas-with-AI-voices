@@ -7,6 +7,7 @@ import { Button } from './ui/button'
 import { Loader } from 'lucide-react'
 import { current } from '@reduxjs/toolkit'
 import { useGeneratePodcastMutation } from '@/store/api/podcastApi'
+import { toast } from "sonner"
 
 const GeneratePodcast: React.FC<IGeneratePodcastProps> = ({voiceType, voicePrompt, setVoicePrompt, audio, setAudio, setAudioStorageID, setAudioDuration}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,55 +60,31 @@ const GeneratePodcast: React.FC<IGeneratePodcastProps> = ({voiceType, voicePromp
   return URL.createObjectURL(blob);
 }
 
-function handleSubmit() {
+function handleGeneration() {
+  if(!voiceType){
+    toast.error("Please select an AI voice first to generate the podcast.");
+    return;
+  }
+  if(!voicePrompt){
+    toast.error("Please add prompt to generate the podcast.");
+    return;
+  }
   setIsSubmitting(true);
-  generatePodcastMutation({ voiceType, voicePrompt })
-    .unwrap()
-    .then((res) => {
-      const url = base64ToWavUrl(res.audioBase64);
-      setAudio(url);
-    })
-    .finally(() => setIsSubmitting(false));
+  generatePodcastMutation({ voiceType, voicePrompt }).unwrap()
+  .then((res) => {
+    const url = base64ToWavUrl(res.audioBase64);
+    setAudio(url);
+  })
+  .finally(() => setIsSubmitting(false));
 }
-
-
-  // async function handleSubmit() {
-  //   if(!voicePrompt)
-  //     return;
-
-  //   setIsSubmitting(true);
-
-  //   try{
-  //     const data = await generatePodcastMutation({voiceType,voicePrompt}).unwrap();
-  //     console.log("response is : ", data);
-
-  //     if (data.audioBase64) {
-  //       const binary = Uint8Array.from(atob(data.audioBase64), (c) => c.charCodeAt(0));
-  //       const blob = new Blob([binary], { type: 'audio/wav' }); // or 'audio/mpeg' if MP3
-  //       const url = URL.createObjectURL(blob);
-  //       setAudio(url);
-  //     } 
-  //     else {
-  //       console.error("No audio returned", data);
-  //     }
-
-  //   }
-  //   catch(err){
-  //     console.error("Error generating Podcast : ", err);
-  //   }
-  //   finally{
-  //     setIsSubmitting(false);
-  //   }
-    
-  // }
 
   return (
     <div className='flex flex-col gap-2.5'>
       <Label className='text-16 font-bold text-white'> AI prompt to generate Podcast</Label>
-      <Textarea rows={5} value={voicePrompt} onChange={(e) => setVoicePrompt(e.target.value)} className="input_class bg-black-1 text-gray-400 focus-visible:ring-orange-500" placeholder="Provide text to AI to generate audio"  />
+      <Textarea rows={5} value={voicePrompt} onChange={(e) => setVoicePrompt(e.target.value)} className="input_class bg-black-1 text-gray-400 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]" placeholder="Provide prompt to AI to generate audio"  />
 
       <div className="pt-5">
-        <Button onClick={handleSubmit} disabled={isSubmitting} className={`p-5 cursor-pointer bg-orange-500 text-16 font-semibold border-2 transition-all duration-500 border-orange-500 hover:border-white `}> {isSubmitting? (<> Generating <Loader size={20} className="animate-spin" />  </>) : 'Generate Podcast'}</Button>
+        <Button type="button" onClick={handleGeneration} disabled={isSubmitting} className={`p-5 cursor-pointer bg-orange-500 text-16 font-semibold border-2 transition-all duration-500 border-orange-500 hover:border-white `}> {isSubmitting? (<> Generating <Loader size={20} className="animate-spin" />  </>) : 'Generate Podcast'}</Button>
       </div>
 
       {audio && (<audio src={audio} controls autoPlay className='pt-5 w-full' />)}

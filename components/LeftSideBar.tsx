@@ -21,7 +21,7 @@ const LeftSideBar = () => {
               key={item.href}
               href={item.href}
               className={`flex justify-center md:justify-start gap-2 md:gap-4 p-2 
-                ${pathName === item.href ? 'bg-nav-focus border-r-4 border-orange-600' : ''}`}
+                ${pathName === item.href ? 'bg-nav-focus border-r-4 border-orange-600 text-18' : ''}`}
             >
               <Image alt={item.name} src={item.icon} width={23} height={27} />
               <p>{item.name}</p>

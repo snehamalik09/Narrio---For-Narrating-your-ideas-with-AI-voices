@@ -2,6 +2,8 @@ import LeftSideBar from "@/components/LeftSideBar";
 import MobileNav from "@/components/MobileNav";
 import RightSideBar from "@/components/RightSideBar";
 import Image from "next/image";
+import { Toaster } from "@/components/ui/sonner"
+
 
 export default function RootLayout({
   children,
@@ -19,6 +21,7 @@ export default function RootLayout({
               <MobileNav/>
             </div>
             <div className="flex flex-col">
+              <Toaster position='top-center' richColors theme='light' />
               {children}
             </div>
           </div>

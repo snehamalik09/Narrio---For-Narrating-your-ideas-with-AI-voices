@@ -19,6 +19,7 @@ import {
 import GeneratePodcast from "@/components/GeneratePodcast";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
 import { Loader } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
 
 const formSchema = z.object({
     podcastTitle: z.string().min(2, {
@@ -45,7 +46,7 @@ const CreatePodcast = () => {
 
     
     const [voicePrompt, setVoicePrompt] = useState<string>("");
-    const [voiceType, setVoiceType] = useState<string>('');
+    const [voiceType, setVoiceType] = useState<string>('Achernar');
 
     const [audioUrl, setAudioUrl] = useState('');
     const [audioStorageID, setAudioStorageID] = useState("");
@@ -61,7 +62,6 @@ const CreatePodcast = () => {
         <section className="flex flex-col w-full h-min-screen">
             <h1 className="text-20 font-bold"> Create Podcasts </h1>
             <Form {...form}>
-
                 <form className="flex flex-col w-full pt-10" onSubmit={form.handleSubmit(onSubmit)} >
                     <div className="flex flex-col gap-[30px] border-b border-gray-700 pb-10">
                         <FormField
@@ -69,9 +69,12 @@ const CreatePodcast = () => {
                             name="podcastTitle"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2.5">
-                                    <FormLabel className="text-16 font-bold text-white">Podcast Title</FormLabel>
+                                    {/* <FormLabel className="text-16 font-bold text-white">Podcast Title</FormLabel> */}
+                                    <Label htmlFor={field.name} className='text-16 font-bold text-white'> Podcast Title</Label>
+                                    
                                     <FormControl>
-                                        <Input className="input_class bg-black-1 text-gray-400  focus-visible:ring-orange-500" placeholder="My Podcast" {...field} />
+                                        <Input className="input_class bg-black-1 text-gray-400  focus:outline-none focus:ring-1 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]  transition duration-200 ease-in-out
+" placeholder="My Podcast" {...field} />
                                     </FormControl>
                                     <FormMessage className="text-16 font-bold text-white" />
                                 </FormItem>
@@ -83,21 +86,24 @@ const CreatePodcast = () => {
                             name="podcastDescription"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-2.5">
-                                    <FormLabel className="text-16 font-bold text-white">Description</FormLabel>
+                                    {/* <FormLabel className="text-16 font-bold text-white">Description</FormLabel> */}
+                                    <Label htmlFor={field.name} className='text-16 font-bold text-white'> Description</Label>
                                     <FormControl>
-                                        <Textarea rows={5} className="input_class bg-black-1 text-gray-400 focus-visible:ring-orange-500" placeholder="Write a short description about the podcast" {...field} />
+                                        <Textarea rows={5} className="input_class bg-black-1 text-gray-400 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]" placeholder="Write a short description about the podcast" {...field} />
                                     </FormControl>
                                     <FormMessage className="text-16 font-bold text-white" />
                                 </FormItem>
                             )}
                         />
 
-                        <div className="w-full">
-                            <Select onValueChange={(value) => setVoiceType(value)}>
-                                <SelectTrigger className="w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
-                                    <SelectValue placeholder="Select AI Voice" />
+                        <div className="w-full flex flex-col gap-2.5">
+                            <Label htmlFor="voice-type" className='text-16 font-bold text-white'> Category</Label>
+                            {/* <Select onValueChange={(value) => setVoiceType(value)}> */}
+                                <Select>
+                                <SelectTrigger id="voice-type" className="w-full bg-black-1 border-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c] ">
+                                    <SelectValue placeholder="Select AI Voice" className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]"/>
                                 </SelectTrigger>
-                                <SelectContent className="border-none bg-black-1 text-16 font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500" >
+                                <SelectContent className="border-none bg-black-1 text-16 font-bold text-white " >
                                     {voiceDetails.map(({id, name}) => {
                                         return (
                                             <SelectItem className="text-16 text-white hover:bg-orange-500 cursor-pointer capitalize" value={name} key={id}>{name}</SelectItem>
@@ -119,7 +125,13 @@ const CreatePodcast = () => {
                             setAudioStorageID = {setAudioStorageID}
                             setAudioDuration = {setAudioDuration}
                         />
-                        <GenerateThumbnail/>
+                        <GenerateThumbnail 
+                            imgPrompt={imgPrompt} 
+                            setImgPrompt={setImgPrompt}
+                            imgUrl = {imgUrl}
+                            setImgUrl = {setImgUrl}
+                            setImgStorageID = {setImgStorageID}
+                        />
                     </div>
 
                     <div className="pt-10">
