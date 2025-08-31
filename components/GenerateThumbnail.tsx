@@ -26,12 +26,16 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
     setIsSubmitting(true);
     try {
       const res = await createThumbnailMutation({ imgPrompt }).unwrap();
-      console.log('response is : ', res);
-      if (res)
-        setImgUrl(res.base64);
+      const imageBase64 = res?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+      console.log('response is : ', imageBase64);
+      if (imageBase64){
+        setImgUrl(imageBase64);
+        toast.success("Thumbnail created");
+      }
     }
     catch (err) {
       console.log("Error generating thumbnail", err);
+      toast.error("Error generating thumbnail");
     }
     finally{
         setIsSubmitting(false);
@@ -61,10 +65,11 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
 
 
           {imgUrl && (
-            <img
-              src={`data:image/png;base64,${imgUrl}`}
+            <Image
+              width={150} height={150}
+              src={imgUrl}
               alt="AI Generated Thumbnail"
-              className="mt-4 w-full rounded-lg border border-gray-700"
+              className="!mt-[20px] rounded-lg border border-gray-700 text-center justify-center"
             />
           )}
 

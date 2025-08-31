@@ -34,6 +34,7 @@ export interface IGeneratePodcastProps {
   setAudio: React.Dispatch<React.SetStateAction<string>>;
   audio: string;
   voiceType: string; 
+  setAudioBase64:React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface IGenerateImageProps {

@@ -41,14 +41,13 @@ export const podcastApi = createApi({
       }),
     }),
 
-    generateThumbnail: builder.mutation<
-      { base64: string; },  // response type
+    generateThumbnail: builder.mutation<any,  // response type
       {imgPrompt: string } // request type
     >({
-      query: (body) => ({
+      query: ({imgPrompt}) => ({
         url: 'generateTTT',
         method: 'POST',
-        body,
+        body:{imgPrompt},
       }),
     }),
 

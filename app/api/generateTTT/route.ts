@@ -1,68 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { saveImage } from "@/lib/server-utils";
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const MODEL_ID = "gemini-2.0-flash-exp";
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, options } = await req.json();
+    const { imgPrompt } = await req.json();
 
-    if (!prompt) {
-      return NextResponse.json({ success: false, error: { code: "MISSING_PROMPT", message: "Prompt is required" } }, { status: 400 });
-    }
-
-    // Generate content
-    const result = await genAI.models.generateContent({
-      model: MODEL_ID,
-      contents: prompt,
-      config: {
-        responseModalities: ["Text", "Image"]
-      }
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        // "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "",
+        // "X-Title": process.env.NEXT_PUBLIC_SITE_NAME || "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-image-preview:free",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: imgPrompt || "A futuristic cyberpunk city at night with neon lights"
+              }
+            ]
+          }
+        ]
+      }),
     });
 
-    const candidate = result?.candidates?.[0];
-    const parts = candidate?.content?.parts ?? [];
+    const data = await response.json();
+    return NextResponse.json(data);
 
-    let imageData: string | null = null;
-    let textResponse: string | null = null;
-    let mimeType = "image/png";
-
-    for (const part of parts) {
-      if (part?.inlineData?.data) {
-        imageData = part.inlineData.data;
-        mimeType = part.inlineData.mimeType ?? "image/png";
-      } else if (part?.text) {
-        textResponse = part.text;
-      }
-    }
-
-    if (!imageData) {
-      return NextResponse.json({ success: false, error: { code: "NO_IMAGE_GENERATED", message: "No image was generated" } }, { status: 500 });
-    }
-
-    const metadata = await saveImage(imageData, prompt, mimeType, options);
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        imageUrl: metadata.url,
-        description: textResponse,
-        metadata
-      }
-    });
-
-  } catch (error: any) {
-    console.error("Error generating image:", error);
-    return NextResponse.json({
-      success: false,
-      error: {
-        code: "GENERATION_FAILED",
-        message: "Failed to generate image",
-        details: error.message ?? String(error)
-      }
-    }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

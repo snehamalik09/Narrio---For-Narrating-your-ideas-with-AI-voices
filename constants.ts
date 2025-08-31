@@ -14,6 +14,18 @@ export const voiceDetails = [
     id: 2,
     name: "Archener",
   },
+  {
+    id: 3,
+    name: "Leda",
+  },
+  {
+    id: 4,
+    name: "Umbriel",
+  },
+  {
+    id: 5,
+    name: "Erinome",
+  },
 ];
 
 
