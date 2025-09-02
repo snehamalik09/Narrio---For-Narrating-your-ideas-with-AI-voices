@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Textarea } from "@/components/ui/textarea"
 import { voiceDetails } from "@/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { generateSignature } from "@/lib/generateSignature";
 import {
@@ -22,6 +22,7 @@ import GeneratePodcast from "@/components/GeneratePodcast";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
 import { Loader } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
+import { useCreatePodcastMutation } from "@/store/api/podcastApi";
 
 
 
@@ -36,16 +37,18 @@ const formSchema = z.object({
 
 const CreatePodcast = () => {
 
+    const [publishPodcast] = useCreatePodcastMutation();
     const [voicePrompt, setVoicePrompt] = useState<string>("");
-    const [voiceType, setVoiceType] = useState<string>('Erinome');
+    const [voiceType, setVoiceType] = useState<string>('');
 
-    const [audioUrl, setAudioUrl] = useState('');
+    const [audioUrl, setAudioUrl] = useState<string>('');
     const [audioStorageID, setAudioStorageID] = useState("");
     const [audioDuration, setAudioDuration] = useState<number | null>(null);
     const [audioBase64, setAudioBase64] = useState<string>("");
     const [imgUrl, setImgUrl] = useState("");
     const [imgStorageID, setImgStorageID] = useState("");
     const [imgPrompt, setImgPrompt] = useState("");
+    const [imgFile, setImgFile] = useState<File | null>(null);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,7 +60,9 @@ const CreatePodcast = () => {
         },
     })
 
-    async function uploadThumbnailToCloudinary(base64Image: string) {
+    const {reset} = form;
+
+    async function uploadThumbnailToCloudinary(base64Image: string | File) {
         return new Promise<any>((resolve, reject) => {
             const timestamp = Math.floor(Date.now() / 1000);
             const paramsToSign = {
@@ -96,96 +101,172 @@ const CreatePodcast = () => {
         });
     }
 
- 
+
     async function uploadAudioToCloudinary(audioBase64: string) {
-  return new Promise<any>((resolve, reject) => {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const paramsToSign = {
-      timestamp,
-      folder: "podcast_audio",
-    //   resource_type: "raw", // ✅ required for audio
-    };
+        return new Promise<any>((resolve, reject) => {
+            const timestamp = Math.floor(Date.now() / 1000);
+            const paramsToSign = {
+                timestamp,
+                folder: "podcast_audio",
+                //   resource_type: "raw", // ✅ required for audio
+            };
 
-    generateSignature({
-      paramsToSign,
-      callback: async (signature: string) => {
-        try {
-          const audioDataUri = audioBase64.startsWith("data:")
-            ? audioBase64
-            : `data:audio/wav;base64,${audioBase64}`;
+            generateSignature({
+                paramsToSign,
+                callback: async (signature: string) => {
+                    try {
+                        const audioDataUri = audioBase64.startsWith("data:")
+                            ? audioBase64
+                            : `data:audio/wav;base64,${audioBase64}`;
 
-          const formData = new FormData();
-          formData.append("file", audioDataUri);
-          formData.append("folder", "podcast_audio");
-          formData.append("timestamp", timestamp.toString());
-          formData.append("signature", signature);
-          formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+                        const formData = new FormData();
+                        formData.append("file", audioDataUri);
+                        formData.append("folder", "podcast_audio");
+                        formData.append("timestamp", timestamp.toString());
+                        formData.append("signature", signature);
+                        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
 
-          const uploadResponse = await fetch(
-            `https://api.cloudinary.com/v1_1/di2wbqdwj/raw/upload`,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+                        const uploadResponse = await fetch(
+                            `https://api.cloudinary.com/v1_1/di2wbqdwj/raw/upload`,
+                            {
+                                method: "POST",
+                                body: formData,
+                            }
+                        );
 
-          const data = await uploadResponse.json();
-          console.log("Uploaded audio URL:", data);
-          resolve(data);
-        } catch (err) {
-          reject(err);
-        }
-      },
-    });
-  });
-}
-
-
+                        const data = await uploadResponse.json();
+                        console.log("Uploaded audio URL:", data);
+                        resolve(data);
+                    } catch (err) {
+                        reject(err);
+                    }
+                },
+            });
+        });
+    }
 
 
+
+    let uploadedImgUrl = imgUrl;
+    let uploadedImgStorageID = imgStorageID;
+    let uploadedAudioUrl = audioUrl;
+    let uploadedAudioStorageID = audioStorageID;
 
 
 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
-        if (!values.podcastTitle || !values.podcastDescription) {
-            toast.error("Title/Description are necessary to publish the podcast.")
-            return;
-        }
-
-        // if (!imgUrl) {
-        //     toast.error("Upload the thumbnail Image to publish the podcast.")
-        //     return;
-        // }
-
-        if (!audioBase64) {
-            toast.error("Upload the podcast audio to publish the podcast.")
-            return;
-        }
-
-        if (audioBase64) {
-            console.log("audioBase64 is prresnt.")
-        }
-
-        // try {
-        //     const thumbnailUpload = await uploadThumbnailToCloudinary(imgUrl);
-        //     console.log("Uploaded thumbnail URL:", thumbnailUpload);
-        //     setImgStorageID(thumbnailUpload.asset_id);
-        //     setImgUrl(thumbnailUpload.secure_url);
-        // }
-        // catch (err) {
-        //     console.error("Error uploading thumbnail:", err);
-        // }
+        console.log(values);
+        setIsSubmitting(true);
 
         try {
-            const audioUpload = await uploadAudioToCloudinary(audioBase64);
-            console.log("Uploaded audio URL:", audioUpload);
-            setAudioStorageID(audioUpload.asset_id);
-            setAudioUrl(audioUpload.secure_url);
+            if (!values.podcastTitle || !values.podcastDescription) {
+                toast.error("Title/Description are necessary to publish the podcast.")
+                return;
+            }
+
+            if (!imgUrl) {
+                toast.error("Upload the thumbnail Image to publish the podcast.")
+                return;
+            }
+
+            if (!audioBase64) {
+                toast.error("Upload the podcast audio to publish the podcast.")
+                return;
+            }
+
+            if (audioBase64) {
+                console.log("audioBase64 is prresnt.")
+            }
+
+            if (imgFile) {
+                try {
+                    const thumbnailUpload = await uploadThumbnailToCloudinary(imgFile);
+                    uploadedImgStorageID = thumbnailUpload.asset_id;
+                    uploadedImgUrl = thumbnailUpload.secure_url;
+                    setImgStorageID(thumbnailUpload.asset_id);
+                    setImgUrl(thumbnailUpload.secure_url);
+                    console.log("Thumbnail uploaded : ", thumbnailUpload);
+                }
+                catch (err) {
+                    toast.error("Error publishing the podcast");
+                    console.error("Error uploading thumbnail:", err);
+                }
+            } else if (imgUrl && imgUrl.startsWith("data:")) {
+                try {
+                    const thumbnailUpload = await uploadThumbnailToCloudinary(imgUrl);
+                    uploadedImgStorageID = thumbnailUpload.asset_id;
+                    uploadedImgUrl = thumbnailUpload.secure_url;
+                    setImgStorageID(thumbnailUpload.asset_id);
+                    setImgUrl(thumbnailUpload.secure_url);
+                    console.log("Thumbnail uploaded : ", thumbnailUpload);
+                }
+                catch (err) {
+                    toast.error("Error publishing the podcast");
+                    console.error("Error uploading thumbnail:", err);
+                }
+            }
+
+
+            try {
+                const audioUpload = await uploadAudioToCloudinary(audioBase64);
+                uploadedAudioStorageID = audioUpload.asset_id;
+                uploadedAudioUrl = audioUpload.secure_url;
+                console.log("Uploaded audio URL:", audioUpload);
+                setAudioStorageID(audioUpload.asset_id);
+                setAudioUrl(audioUpload.secure_url);
+            }
+            catch (err) {
+                toast.error("Error publishing the podcast");
+                console.error("Error uploading audio:", err);
+            }
+
+            const formDetails = {
+                podcastTitle: values.podcastTitle,
+                podcastDescription: values.podcastDescription,
+                imgUrl: uploadedImgUrl,
+                imgStorageID: uploadedImgStorageID,
+                imgPrompt,
+                audioUrl: uploadedAudioUrl,
+                audioStorageID: uploadedAudioStorageID,
+                voicePrompt,
+                voiceType,
+                audioDuration
+            }
+
+            try {
+                const res = await publishPodcast(formDetails).unwrap();
+                toast.success('Podcast is Published Successfully');
+                console.log("Podcast published Successfully", res);
+            }
+            catch (err) {
+                console.error("Error publishing podcast:", err);
+                toast.error("Error publishing the podcast");
+            }
+
         }
         catch (err) {
-            console.error("Error uploading audio:", err);
+            console.error("Error publishing podcast:", err);
+            toast.error("Error publishing the podcast");
+        }
+        finally {
+            setIsSubmitting(false);
+            setImgUrl('');
+            setImgFile(null);
+            setAudioBase64('');
+            setAudioDuration(null);
+            setAudioStorageID('');
+            setVoicePrompt('');
+            setVoiceType('');
+            setImgPrompt('');
+            setImgStorageID('');
+
+            uploadedImgUrl = '';
+            uploadedImgStorageID = '';
+            uploadedAudioUrl = '';
+            uploadedAudioStorageID = '';
+
+            reset();
         }
 
     }
@@ -231,7 +312,7 @@ const CreatePodcast = () => {
                         <div className="w-full flex flex-col gap-2.5">
                             <Label htmlFor="voice-type" className='text-16 font-bold text-white'> Category</Label>
                             <Select onValueChange={(value) => setVoiceType(value)}>
-                            {/* <Select> */}
+                                {/* <Select> */}
                                 <SelectTrigger id="voice-type" className="w-full bg-black-1 border-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c] ">
                                     <SelectValue placeholder="Select AI Voice" className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]" />
                                 </SelectTrigger>
@@ -264,6 +345,7 @@ const CreatePodcast = () => {
                             imgUrl={imgUrl}
                             setImgUrl={setImgUrl}
                             setImgStorageID={setImgStorageID}
+                            setImgFile={setImgFile}
                         />
                     </div>
 
@@ -278,3 +360,7 @@ const CreatePodcast = () => {
 
 
 export default CreatePodcast;
+
+
+
+// audioDuration is NULL

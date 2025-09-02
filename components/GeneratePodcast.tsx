@@ -89,7 +89,7 @@ function handleGeneration() {
         <Button type="button" onClick={handleGeneration} disabled={isSubmitting} className={`p-5 cursor-pointer bg-orange-500 text-16 font-semibold border-2 transition-all duration-500 border-orange-500 hover:border-white `}> {isSubmitting? (<> Generating <Loader size={20} className="animate-spin" />  </>) : 'Generate Podcast'}</Button>
       </div>
 
-      {audio && (<audio src={audio} controls autoPlay className='pt-5 w-full' />)}
+      {audio && (<audio key={audio} src={audio} controls autoPlay className='pt-5 w-full' onLoadedMetadata={ (e) => setAudioDuration(e.currentTarget.duration)} />)}
     </div>
   )
 }

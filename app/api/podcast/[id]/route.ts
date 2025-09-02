@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import Podcast from "@/models/Podcast.model";
 import { connectDB } from "@/lib/mongodb";
 
-export async function GET({params}:{params : {id:string}}) {
+export async function GET(req:Request, {params}:{params : {id:string}}) {
   await connectDB()
   try {
+    console.log("podcast id server : ", params.id);
     const podcast = await Podcast.findById(params.id);
     if(!podcast)
         return NextResponse.json({error:'Podcast not found'}, {status:404});

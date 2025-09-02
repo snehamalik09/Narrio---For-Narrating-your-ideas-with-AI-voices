@@ -12,7 +12,7 @@ export interface IPodcast extends Document {
   authorID?: string;
   authorImgUrl?: string;
   voicePrompt?: string;
-  imagePrompt?: string;
+  imgPrompt?: string;
   voiceType?: string;
   audioDuration?: number;
   views?: number;
@@ -43,4 +43,5 @@ export interface IGenerateImageProps {
   imgUrl: string;
   setImgPrompt: React.Dispatch<React.SetStateAction<string>>;
   setImgStorageID: React.Dispatch<React.SetStateAction<string>>;
+  setImgFile: React.Dispatch<React.SetStateAction<File|null>>;
 }

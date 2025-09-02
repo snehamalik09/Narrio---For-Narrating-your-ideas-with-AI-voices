@@ -11,11 +11,17 @@ import { useGenerateThumbnailMutation } from '@/store/api/podcastApi'
 
 
 
-const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPrompt, imgUrl, setImgUrl, setImgStorageID }) => {
+const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPrompt, setImgFile, imgUrl, setImgUrl, setImgStorageID }) => {
   const [AIGenerated, setAIGenerated] = useState<boolean | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [createThumbnailMutation] = useGenerateThumbnailMutation();
+
+  async function handleFile(e: any) {
+    const file = e.target.files[0];
+    setImgFile(file);
+    setImgUrl(URL.createObjectURL(file)); //temporary url for preview
+  }
 
   async function handleGeneration() {
 
@@ -28,7 +34,8 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
       const res = await createThumbnailMutation({ imgPrompt }).unwrap();
       const imageBase64 = res?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
       console.log('response is : ', imageBase64);
-      if (imageBase64){
+      if (imageBase64) {
+        setImgFile(null);
         setImgUrl(imageBase64);
         toast.success("Thumbnail created");
       }
@@ -37,8 +44,8 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
       console.log("Error generating thumbnail", err);
       toast.error("Error generating thumbnail");
     }
-    finally{
-        setIsSubmitting(false);
+    finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -62,26 +69,24 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
           <div className="pt-5">
             <Button type="button" onClick={handleGeneration} disabled={isSubmitting} className={`p-5 cursor-pointer bg-orange-500 text-16 font-semibold border-2 transition-all duration-500 border-orange-500 hover:border-white `}> {isSubmitting ? (<> Generating <Loader size={20} className="animate-spin" />  </>) : 'Generate Thumbnail'}</Button>
           </div>
-
-
-          {imgUrl && (
-            <Image
-              width={150} height={150}
-              src={imgUrl}
-              alt="AI Generated Thumbnail"
-              className="!mt-[20px] rounded-lg border border-gray-700 text-center justify-center"
-            />
-          )}
-
         </div>
       ) : (
         <>
           <div className='image_div' onClick={() => fileInputRef?.current?.click()}>
-            <Input ref={fileInputRef} type="file" className='hidden' accept="image/*" />
+            <Input ref={fileInputRef} type="file" className='hidden' accept="image/*" onChange={handleFile} />
             <Image alt='upload-image' src='/icons/upload-image.svg' width={30} height={30} />
             <p className='font-bold text-white text-14'> <span className='text-orange-500'>Click to Upload</span> or drag and drop </p>
           </div>
         </>
+      )}
+
+      {imgUrl && (
+        <Image
+          width={150} height={150}
+          src={imgUrl}
+          alt="AI Generated Thumbnail"
+          className="!mt-[20px] rounded-lg border border-gray-700 text-center justify-center"
+        />
       )}
     </>
   )

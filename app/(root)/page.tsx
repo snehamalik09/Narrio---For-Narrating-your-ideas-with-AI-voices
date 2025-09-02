@@ -8,9 +8,6 @@ import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation
 const Home = () => {
 
     const { data: podcastData, isLoading, error, refetch } = useGetPodcastsQuery();
-    const [createPodcast] = useCreatePodcastMutation();
-    const [deletePodcast] = useDeletePodcastMutation();
-
     useEffect(()=>{
         console.log('podcast data is : ', podcastData);
     }, [podcastData])
@@ -31,3 +28,5 @@ const Home = () => {
 
 
 export default Home;
+
+// similar podcasts
