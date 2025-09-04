@@ -30,3 +30,4 @@ const Home = () => {
 export default Home;
 
 // similar podcasts
+// author name in podcast detail player

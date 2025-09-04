@@ -6,7 +6,7 @@ export interface IPodcast extends Document {
   podcastDescription: string;
   imgUrl: string;
   imgStorageID?: string;
-  audioUrl?: string;
+  audioUrl: string;
   audioStorageID?: string;
   author?: string;
   authorID?: string;
@@ -14,7 +14,7 @@ export interface IPodcast extends Document {
   voicePrompt?: string;
   imgPrompt?: string;
   voiceType?: string;
-  audioDuration?: number;
+  audioDuration: number;
   views?: number;
   user?: mongoose.Schema.Types.ObjectId;
 }
