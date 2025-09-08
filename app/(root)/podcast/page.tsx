@@ -1,7 +1,7 @@
 const Podcast = () => {
     return (
         <>
-            Podcast 
+        Podcast
         </>
     )
 }

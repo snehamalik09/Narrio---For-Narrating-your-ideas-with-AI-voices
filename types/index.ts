@@ -33,8 +33,8 @@ export interface IGeneratePodcastProps {
   setAudioDuration: React.Dispatch<React.SetStateAction<number|null>>;
   setAudio: React.Dispatch<React.SetStateAction<string>>;
   audio: string;
-  voiceType: string; 
-  setAudioBase64:React.Dispatch<React.SetStateAction<string>>;
+  voiceType: string|null; 
+  setAudioBlob:React.Dispatch<React.SetStateAction<Blob|null>>;
 }
 
 export interface IGenerateImageProps {
@@ -44,4 +44,14 @@ export interface IGenerateImageProps {
   setImgPrompt: React.Dispatch<React.SetStateAction<string>>;
   setImgStorageID: React.Dispatch<React.SetStateAction<string>>;
   setImgFile: React.Dispatch<React.SetStateAction<File|null>>;
+}
+
+export interface PlayerState{
+    podcastID: string;
+    title:string;
+    imgUrl:string;
+    audioUrl:string;
+    isPlaying:boolean;
+    author: string;
+    audioDuration:number|null;
 }

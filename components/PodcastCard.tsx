@@ -8,7 +8,7 @@ const PodcastCard = ( {title, description, imgUrl, podcastID} : {imgUrl:string, 
   function handleViews(){
     // increase views
 
-    router.push(`podcast/${podcastID}`, {'scroll':true});
+    router.push(`/podcast/${podcastID}`, {'scroll':true});
   }
 
   return (

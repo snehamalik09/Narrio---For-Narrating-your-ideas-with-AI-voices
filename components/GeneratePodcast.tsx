@@ -9,7 +9,7 @@ import { current } from '@reduxjs/toolkit'
 import { useGeneratePodcastMutation } from '@/store/api/podcastApi'
 import { toast } from "sonner"
 
-const GeneratePodcast: React.FC<IGeneratePodcastProps> = ({voiceType, voicePrompt, setVoicePrompt, audio, setAudio, setAudioStorageID, setAudioBase64, setAudioDuration}) => {
+const GeneratePodcast: React.FC<IGeneratePodcastProps> = ({voiceType, voicePrompt, setVoicePrompt, audio, setAudio, setAudioStorageID, setAudioBlob, setAudioDuration}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatePodcastMutation] = useGeneratePodcastMutation();
 
@@ -57,6 +57,7 @@ const GeneratePodcast: React.FC<IGeneratePodcastProps> = ({voiceType, voicePromp
   new Uint8Array(wavBuffer, 44).set(buffer);
 
   const blob = new Blob([wavBuffer], { type: "audio/wav" });
+  setAudioBlob(blob);
   return URL.createObjectURL(blob);
 }
 
@@ -73,7 +74,6 @@ function handleGeneration() {
   generatePodcastMutation({ voiceType, voicePrompt }).unwrap()
   .then((res) => {
     console.log("url is : ",res.audioBase64);
-    setAudioBase64(res.audioBase64);
     const url = base64ToWavUrl(res.audioBase64);
     setAudio(url);
   })

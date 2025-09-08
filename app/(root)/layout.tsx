@@ -3,6 +3,7 @@ import MobileNav from "@/components/MobileNav";
 import RightSideBar from "@/components/RightSideBar";
 import Image from "next/image";
 import { Toaster } from "@/components/ui/sonner"
+import GlobalPlayer from "@/components/GlobalPlayer";
 
 
 export default function RootLayout({
@@ -17,12 +18,13 @@ export default function RootLayout({
         <section className=" flex flex-col min-h-screen flex-1 px-4 sm:px-14">
           <div className="mx-auto flex flex-col w-full max-w-5xl px-5 py-7 max-sm:px-4">
             <div className="md:hidden flex items-center jsutify-between h-16">
-              <Image src='/icons.logo.svg' alt="menu logo" width={30} height={30} />
+              <Image src='/icons/logo.svg' alt="menu logo" width={30} height={30} />
               <MobileNav/>
             </div>
             <div className="flex flex-col">
               <Toaster position='top-center' richColors theme='light' />
               {children}
+              <GlobalPlayer/>
             </div>
           </div>
           

@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { podcastApi } from './api/podcastApi'
+import PlayerReducer from './slices/playerSlice'
 
 export const store = configureStore({
   reducer: {
+    player:PlayerReducer,
     [podcastApi.reducerPath]: podcastApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

@@ -11,6 +11,7 @@ import { voiceDetails } from "@/constants";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { generateSignature } from "@/lib/generateSignature";
+import { base64ToBlob } from "@/lib/base64ToBlob";
 import {
     Select,
     SelectContent,
@@ -39,12 +40,12 @@ const CreatePodcast = () => {
 
     const [publishPodcast] = useCreatePodcastMutation();
     const [voicePrompt, setVoicePrompt] = useState<string>("");
-    const [voiceType, setVoiceType] = useState<string>('');
+    const [voiceType, setVoiceType] = useState<string | null>(null);
 
     const [audioUrl, setAudioUrl] = useState<string>('');
     const [audioStorageID, setAudioStorageID] = useState("");
     const [audioDuration, setAudioDuration] = useState<number | null>(null);
-    const [audioBase64, setAudioBase64] = useState<string>("");
+    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const [imgUrl, setImgUrl] = useState("");
     const [imgStorageID, setImgStorageID] = useState("");
     const [imgPrompt, setImgPrompt] = useState("");
@@ -60,7 +61,7 @@ const CreatePodcast = () => {
         },
     })
 
-    const {reset} = form;
+    const { reset } = form;
 
     async function uploadThumbnailToCloudinary(base64Image: string | File) {
         return new Promise<any>((resolve, reject) => {
@@ -102,32 +103,28 @@ const CreatePodcast = () => {
     }
 
 
-    async function uploadAudioToCloudinary(audioBase64: string) {
+    async function uploadAudioToCloudinary(audioBlob: Blob) {
         return new Promise<any>((resolve, reject) => {
             const timestamp = Math.floor(Date.now() / 1000);
             const paramsToSign = {
                 timestamp,
                 folder: "podcast_audio",
-                //   resource_type: "raw", // ✅ required for audio
             };
 
             generateSignature({
                 paramsToSign,
                 callback: async (signature: string) => {
                     try {
-                        const audioDataUri = audioBase64.startsWith("data:")
-                            ? audioBase64
-                            : `data:audio/wav;base64,${audioBase64}`;
-
+                        console.log("audio blob is : ", audioBlob);
                         const formData = new FormData();
-                        formData.append("file", audioDataUri);
+                        formData.append("file", audioBlob, 'podcast.wav');
                         formData.append("folder", "podcast_audio");
                         formData.append("timestamp", timestamp.toString());
                         formData.append("signature", signature);
-                        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!);
+                        formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string);
 
                         const uploadResponse = await fetch(
-                            `https://api.cloudinary.com/v1_1/di2wbqdwj/raw/upload`,
+                            `https://api.cloudinary.com/v1_1/di2wbqdwj/video/upload`,
                             {
                                 method: "POST",
                                 body: formData,
@@ -170,13 +167,13 @@ const CreatePodcast = () => {
                 return;
             }
 
-            if (!audioBase64) {
+            if (!audioBlob) {
                 toast.error("Upload the podcast audio to publish the podcast.")
                 return;
             }
 
-            if (audioBase64) {
-                console.log("audioBase64 is prresnt.")
+            if (audioBlob) {
+                console.log("audioBlob is prresnt.")
             }
 
             if (imgFile) {
@@ -209,12 +206,13 @@ const CreatePodcast = () => {
 
 
             try {
-                const audioUpload = await uploadAudioToCloudinary(audioBase64);
+                const audioUpload = await uploadAudioToCloudinary(audioBlob);
                 uploadedAudioStorageID = audioUpload.asset_id;
                 uploadedAudioUrl = audioUpload.secure_url;
                 console.log("Uploaded audio URL:", audioUpload);
                 setAudioStorageID(audioUpload.asset_id);
                 setAudioUrl(audioUpload.secure_url);
+                setAudioDuration(audioUpload.duration);
             }
             catch (err) {
                 toast.error("Error publishing the podcast");
@@ -253,11 +251,11 @@ const CreatePodcast = () => {
             setIsSubmitting(false);
             setImgUrl('');
             setImgFile(null);
-            setAudioBase64('');
+            setAudioBlob(null);
             setAudioDuration(null);
             setAudioStorageID('');
             setVoicePrompt('');
-            setVoiceType('');
+            setVoiceType(null);
             setImgPrompt('');
             setImgStorageID('');
 
@@ -323,7 +321,7 @@ const CreatePodcast = () => {
                                         )
                                     })}
                                 </SelectContent>
-                                {voiceType && (<audio src={`/${voiceType}.wav`} className='hidden' autoPlay />)}
+                                {voiceType != null && (<audio src={`/${voiceType}.wav`} className='hidden' autoPlay />)}
                             </Select>
                         </div>
                     </div>
@@ -337,7 +335,7 @@ const CreatePodcast = () => {
                             setAudio={setAudioUrl}
                             setAudioStorageID={setAudioStorageID}
                             setAudioDuration={setAudioDuration}
-                            setAudioBase64={setAudioBase64}
+                            setAudioBlob={setAudioBlob}
                         />
                         <GenerateThumbnail
                             imgPrompt={imgPrompt}
@@ -363,4 +361,3 @@ export default CreatePodcast;
 
 
 
-// audioDuration is NULL
