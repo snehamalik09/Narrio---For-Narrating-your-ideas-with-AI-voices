@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation } from "@/store/api/podcastApi";
 import PodcastDetailPlayer from "@/components/PodcastDetailPlayer";
 import LoaderSpinner from "@/components/LoaderSpinner";
+import { Edit } from "lucide-react";
 
 const Home = () => {
 
@@ -37,12 +38,10 @@ const Home = () => {
 export default Home;
 
 // similar podcasts
-// author name in podcast detail player
 // ask user are you sure before deleting
 // author name in PodcastDetailPlayer
 // Views
-// podcast detail player
-// play podcast shrinks when clicked on 3 dots
 // audiobar and vocie type still there after creating
 // when deleting podcast delete attached audio and image
 // audio increase decrease functionality
+// if podcast is of author then only shoe Edit, delete button

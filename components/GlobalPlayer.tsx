@@ -16,6 +16,7 @@ const GlobalPlayer = () => {
     const [isMute, setIsMute] = useState(false);
     const dispatch = useDispatch();
     const pathname = usePathname();
+    const progressBarRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -70,12 +71,24 @@ const GlobalPlayer = () => {
         audioRef.current.currentTime += 15;
     }
 
+    const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (!audioRef.current || !progressBarRef.current) return
+
+  const rect = progressBarRef.current.getBoundingClientRect()
+  const clickX = e.clientX - rect.left
+  const percentage = clickX / rect.width
+  const newTime = percentage * totalTime
+
+  audioRef.current.currentTime = newTime
+  setCurrentSeconds(newTime)
+}
+
 
     return (
 
-        <div className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-[13%] flex flex-col">
+        <div  className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-[14%] flex flex-col " >
             {/* <div className={'bg-white p-0.5'} style={{ width: `${(currentSeconds / totalTime) * 100}%` }}></div> */}
-            <div className="w-full bg-gray-700 h-1 relative cursor-pointer">
+            <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
                 <div
                     className="bg-white h-1"
                     style={{ width: `${(currentSeconds / totalTime) * 100}%` }}
@@ -87,16 +100,16 @@ const GlobalPlayer = () => {
                 ></div>
             </div>
 
-            <div className=" flex justify-around">
-                <div className='flex gap-5 p-2'>
-                    <Image src={imgUrl} alt='thubmnail' width={80} height={60} />
+            <div className=" flex justify-around p-3">
+                <div className='flex flex-1 gap-5'>
+                    <Image src={imgUrl} alt='thubmnail' width={70} height={50} />
                     <div className='flex flex-col gap-1'>
-                        <h2 className='font-bold text-16'>{title}</h2>
-                        <p>{author}</p>
+                        <h2 className='font-bold text-14'>{title}</h2>
+                        <p className='text-12'>{author}</p>
                     </div>
                 </div>
 
-                <div className='flex flex-row gap-2.5 justify-center items-center p-2'>
+                <div className='flex flex-1 flex-row gap-2.5 justify-center items-center'>
 
                     <Image src='/icons/reverse.svg' alt='reverse' width={25} height={25} className='cursor-pointer' onClick={handleReverse} />
                     <p className='text-12'>-15</p>
@@ -112,7 +125,7 @@ const GlobalPlayer = () => {
                     <Image src='/icons/forward.svg' alt='forward' width={25} height={25} className='cursor-pointer' onClick={handleForward} />
                 </div>
 
-                <div className='flex flex-row gap-2.5 justify-center items-center p-2'>
+                <div className='flex flex-1 flex-row gap-2.5 justify-center items-center'>
                     <p className='text-12'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
                     {isMute ? <Image src='/icons/unmute.svg' alt='unmute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(false)} /> :
                         <Image src='/icons/mute.svg' alt='mute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(true)} />

@@ -63,7 +63,7 @@ const podcastDetails = () => {
                     </div>
                 </div>
 
-                {<section className='flex flex-col mt-8 gap-5'>
+                {<section className='flex flex-col !mt-8 gap-5 !mb-20'>
                     <h1 className='text-20 text-white font-bold'>Similar Podcasts</h1>
                     {similarPodcasts && similarPodcasts.length <= 0 ? <EmptyState title='tst' buttonLink='/discover' search='no' /> :
                         (

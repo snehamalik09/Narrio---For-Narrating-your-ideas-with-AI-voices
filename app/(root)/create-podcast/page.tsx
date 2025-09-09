@@ -258,6 +258,7 @@ const CreatePodcast = () => {
             setVoiceType(null);
             setImgPrompt('');
             setImgStorageID('');
+            setAudioUrl('');
 
             uploadedImgUrl = '';
             uploadedImgStorageID = '';
@@ -309,8 +310,7 @@ const CreatePodcast = () => {
 
                         <div className="w-full flex flex-col gap-2.5">
                             <Label htmlFor="voice-type" className='text-16 font-bold text-white'> Category</Label>
-                            <Select onValueChange={(value) => setVoiceType(value)}>
-                                {/* <Select> */}
+                            <Select value={voiceType??''} onValueChange={(value) => setVoiceType(value)}>
                                 <SelectTrigger id="voice-type" className="w-full bg-black-1 border-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c] ">
                                     <SelectValue placeholder="Select AI Voice" className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]" />
                                 </SelectTrigger>
@@ -321,7 +321,7 @@ const CreatePodcast = () => {
                                         )
                                     })}
                                 </SelectContent>
-                                {voiceType != null && (<audio src={`/${voiceType}.wav`} className='hidden' autoPlay />)}
+                                {voiceType && (<audio src={`/${voiceType}.wav`} className='hidden' autoPlay />)}
                             </Select>
                         </div>
                     </div>
