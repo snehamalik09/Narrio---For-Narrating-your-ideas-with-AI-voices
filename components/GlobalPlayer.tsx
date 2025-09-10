@@ -17,6 +17,8 @@ const GlobalPlayer = () => {
     const dispatch = useDispatch();
     const pathname = usePathname();
     const progressBarRef = useRef<HTMLDivElement>(null);
+    const volumeBarRef = useRef<HTMLDivElement>(null);
+    const [volume, setVolume] = useState(1);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -84,6 +86,20 @@ const GlobalPlayer = () => {
 }
 
 
+
+const handleVolume = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (!audioRef.current || !volumeBarRef.current) return;
+
+  const rect = volumeBarRef.current.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); // clamp 0-1
+
+  audioRef.current.volume = percentage;
+  setVolume(percentage);
+};
+
+
+
     return (
 
         <div  className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-[14%] flex flex-col " >
@@ -132,7 +148,9 @@ const GlobalPlayer = () => {
                     }
 
 
-                    <div className='bg-gray-700 rounded-xl py-1 w-30 cursor-pointer'></div>
+                    <div ref={volumeBarRef} className='bg-gray-700 h-1 w-30 cursor-pointer rounded-lg' onClick={handleVolume}>
+                        <div className='bg-white h-1 w-full rounded-lg' style={{width:`${volume*100}%`}}></div>
+                    </div>
                 </div>
 
                 <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />

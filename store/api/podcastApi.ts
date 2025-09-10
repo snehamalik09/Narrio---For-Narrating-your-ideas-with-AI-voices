@@ -9,7 +9,7 @@ export const podcastApi = createApi({
     getPodcasts: builder.query<IPodcast[], void>({
       query: () => 'podcast',
       providesTags: ['Podcast'],
-    }),
+    }), 
     createPodcast: builder.mutation<IPodcast, Partial<any>>({
       query: (body) => ({
         url: 'podcast',
@@ -22,6 +22,11 @@ export const podcastApi = createApi({
       query: ({ id }) => `podcast/${id}`,
       providesTags: ['Podcast'],
     }),
+
+    getPodcastBySearch: builder.query<IPodcast[], { search: string }>({
+      query: ({ search }) => `discover?search=${search}`,
+    }),
+
     deletePodcast: builder.mutation<IPodcast, string>({
       query: (id) => ({
         url: `podcast/${id}`,
@@ -54,4 +59,4 @@ export const podcastApi = createApi({
   }),
 })
 
-export const { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi
+export const { useGetPodcastsQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi

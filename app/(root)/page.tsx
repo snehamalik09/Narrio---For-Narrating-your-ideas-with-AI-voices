@@ -45,3 +45,4 @@ export default Home;
 // when deleting podcast delete attached audio and image
 // audio increase decrease functionality
 // if podcast is of author then only shoe Edit, delete button
+// user on rightsidebar
