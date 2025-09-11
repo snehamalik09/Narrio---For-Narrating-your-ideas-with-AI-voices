@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "@/store/ReduxProvider";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +35,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider appearance={{
+      layout: {socialButtonsVariant:'iconButton', logoImageUrl:'/icons/auth-logo.svg'},
+      variables : {colorBackground: '#15171c', colorPrimary: '#f97316', colorText: 'white', colorInputBackground: '#1b1f29', colorInputText:'white' },
+      elements: {
+      socialButtonsIconButton: "bg-white hover:bg-white", 
+    },
+      }}>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -35,5 +50,10 @@ export default function RootLayout({
         
       </body>
     </html>
+    </ClerkProvider>
   );
 }
+
+
+
+
