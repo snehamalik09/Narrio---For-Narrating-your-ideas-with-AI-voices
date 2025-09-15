@@ -37,13 +37,14 @@ const Home = () => {
 
 export default Home;
 
-// similar podcasts
 // ask user are you sure before deleting
-// author name in PodcastDetailPlayer
-// Views
-// audiobar and vocie type still there after creating
+// Views an dpodcast count
 // when deleting podcast delete attached audio and image
-// audio increase decrease functionality
-// if podcast is of author then only shoe Edit, delete button
-// user on rightsidebar
 // change the auth-log0
+// protecting every route
+// edit fucntionality
+// generate thumbnail cracked
+// author details page
+// profile page
+// playing audio even after the podcast submitted for a few seconds until everything gets cleared
+

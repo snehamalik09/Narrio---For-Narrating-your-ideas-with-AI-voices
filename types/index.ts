@@ -8,8 +8,8 @@ export interface IPodcast extends Document {
   imgStorageID?: string;
   audioUrl: string;
   audioStorageID?: string;
-  author?: string;
-  authorID?: string;
+  author: string;
+  authorID: string;
   authorImgUrl?: string;
   voicePrompt?: string;
   imgPrompt?: string;
@@ -25,6 +25,17 @@ export interface IUser extends Document {
   imgUrl: string;
   clerkID: string;
 }
+
+export interface IAuthor extends Document {
+  email: string;
+  username: string;
+  imgUrl: string;
+  clerkID: string;
+  totalViews: number;
+  podcastCount:number;
+  podcasts: [mongoose.Schema.Types.ObjectId];
+}
+
 
 export interface IGeneratePodcastProps {
   voicePrompt: string;

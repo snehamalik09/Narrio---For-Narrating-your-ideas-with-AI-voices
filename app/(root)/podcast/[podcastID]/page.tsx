@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation'
 import { useGetPodcastByIdQuery } from '@/store/api/podcastApi'
 import LoaderSpinner from '@/components/LoaderSpinner'
 import { useGetPodcastsQuery } from '@/store/api/podcastApi'
+import { useGetPodcastsByAuthorIdQuery } from '@/store/api/podcastApi'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import EmptyState from '@/components/EmptyState'
@@ -13,17 +14,15 @@ import PodcastCard from '@/components/PodcastCard'
 import PodcastDetailPlayer from '@/components/PodcastDetailPlayer'
 
 const podcastDetails = () => {
-    const { data: similarPodcasts, isLoading: similarPodcastLoading } = useGetPodcastsQuery();
     const params = useParams();
     const id = params.podcastID as string;
-    console.log("podcast id client : ", id);
-
     const { data, error, isLoading, refetch } = useGetPodcastByIdQuery({ id });
-    useEffect(() => {
-        console.log("data fetched : ", data);
-    }, [data]);
 
-    const isOwner = true;
+    const { data: similarPodcasts, isLoading: similarPodcastLoading } = useGetPodcastsByAuthorIdQuery({id:data?.authorID??''});
+    console.log('similar podcasts : ', similarPodcasts);
+    
+
+    
 
     if (isLoading || similarPodcastLoading) {
         return <LoaderSpinner />
@@ -44,7 +43,7 @@ const podcastDetails = () => {
                 <div className='flex flex-col w-full gap-7'>
 
                     {data &&
-                        <PodcastDetailPlayer podcastID={data._id} podcastThumbnail={data.imgUrl} podcastTitle={data.podcastTitle} audioDuration={data.audioDuration} audioUrl={data.audioUrl} isOwner={isOwner} />
+                        <PodcastDetailPlayer podcastID={data._id} podcastThumbnail={data.imgUrl} podcastTitle={data.podcastTitle} audioDuration={data.audioDuration} audioUrl={data.audioUrl} authorID={data.authorID} authorName={data.author} authorImgUrl={data.authorImgUrl}  />
                     }
 
                     <p className='text-16 pt-[20px] font-normal max-md:text-center text-white'>{data?.podcastDescription}</p>
@@ -65,10 +64,10 @@ const podcastDetails = () => {
 
                 {<section className='flex flex-col !mt-8 gap-5 !mb-20'>
                     <h1 className='text-20 text-white font-bold'>Similar Podcasts</h1>
-                    {similarPodcasts && similarPodcasts.length <= 0 ? <EmptyState title='tst' buttonLink='/discover' search='no' /> :
+                    {similarPodcasts && similarPodcasts.totalPodcasts && similarPodcasts.totalPodcasts.length <= 0 ? <EmptyState title='tst' buttonLink='/discover' search='no' /> :
                         (
                             <div className='podcast_grid'>
-                                {similarPodcasts?.map((data, index) => {
+                                {similarPodcasts?.totalPodcasts?.map((data, index) => {
                                     return (
                                         <PodcastCard key={data._id} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
                                     )

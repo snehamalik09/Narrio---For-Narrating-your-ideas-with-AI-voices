@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IGeneratePodcastProps, IPodcast } from '@/types';
+import { IAuthor, IGeneratePodcastProps, IPodcast } from '@/types';
 
 export const podcastApi = createApi({
   reducerPath: 'podcastApi',
@@ -27,6 +27,10 @@ export const podcastApi = createApi({
       query: ({ search }) => `discover?search=${search}`,
     }),
 
+    getPodcastsByAuthorId: builder.query<IPodcast[], { id: string }>({
+      query: ({ id }) => `author/${id}`,
+    }),
+
     deletePodcast: builder.mutation<IPodcast, string>({
       query: (id) => ({
         url: `podcast/${id}`,
@@ -34,6 +38,11 @@ export const podcastApi = createApi({
       }),
       invalidatesTags: ['Podcast'],
     }),
+
+    getTopPodcasters: builder.query<IAuthor[], void>({
+      query: () => 'top-podcasters',
+      // providesTags: ['Author'],
+    }), 
 
     generatePodcast: builder.mutation<
       { audioBase64: string; id?: string },  // response type
@@ -59,4 +68,4 @@ export const podcastApi = createApi({
   }),
 })
 
-export const { useGetPodcastsQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi
+export const { useGetPodcastsQuery, useGetTopPodcastersQuery, useGetPodcastsByAuthorIdQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi

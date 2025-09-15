@@ -1,27 +1,40 @@
 'use client';
 
 import React from 'react'
-import { useGetPodcastsQuery } from "@/store/api/podcastApi";
+import { useGetTopPodcastersQuery } from "@/store/api/podcastApi";
 import Image from 'next/image';
 
 
 const TopPodcasters = () => {
-  const { data: podcastData, isLoading, error, refetch } = useGetPodcastsQuery()
+  const { data: podcastData, isLoading, error, refetch } = useGetTopPodcastersQuery()
 
   return (
     <>
       <div className='flex flex-col gap-4 !mt-4'>
         {podcastData?.map((data, index) => {
           return (
-            <figure key={index} className='flex gap-2 w-full md:gap-4 cursor-pointer justify-around items-start' >
-              <Image alt='thumbnail' src={data.imgUrl} width={50} height={50} className='aspect-square' />
-              <div className='flex flex-col'>
-                <h1 className='text-12 font-bold truncate'>AuthorName</h1>
-                <p className='text-12 font-normal'>category</p>
+            <figure
+              key={index}
+              className="flex items-center gap-3 w-full cursor-pointer"
+            >
+              <Image
+                alt="thumbnail"
+                src={data.imgUrl} 
+                width={50}
+                height={50}
+                className="object-cover shrink-0 w-[50px] h-[50px]"  
+              />
+
+              <div className="flex flex-col flex-1 min-w-0"> 
+                <h1 className="text-12 font-bold truncate">{data.username}</h1>
+                <p className="text-xs font-normal">{data.podcastCount} podcasts</p>
               </div>
-                
-                <p className='text-12 font-normal text-gray-300'>34 Podcasts</p>
+
+              <p className="text-12 font-normal text-gray-300 shrink-0">
+                {data.totalViews} Views
+              </p>
             </figure>
+
           )
         })}
       </div>

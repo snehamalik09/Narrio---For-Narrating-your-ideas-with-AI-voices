@@ -118,3 +118,17 @@ html {
   @utility text-32 {
     @apply text-[32px] leading-normal;
   }
+
+  .cl-userButtonPopoverActionButton{
+    color: white;
+    transition: color 0.3s ease;
+  }
+
+  .cl-userButtonPopoverActionButton:hover{
+    color: #f97316;
+
+  }
+
+  .cl-userButtonPopoverCard{
+    background-color: #f97316;
+  }

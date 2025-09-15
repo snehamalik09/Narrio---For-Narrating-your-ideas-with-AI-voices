@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider appearance={{
-      layout: {socialButtonsVariant:'iconButton', logoImageUrl:'/icons/auth-logo.svg'},
+      layout: {socialButtonsVariant:'iconButton', logoImageUrl:'/icons/logo.svg'},
       variables : {colorBackground: '#15171c', colorPrimary: '#f97316', colorText: 'white', colorInputBackground: '#1b1f29', colorInputText:'white' },
       elements: {
       socialButtonsIconButton: "bg-white hover:bg-white", 

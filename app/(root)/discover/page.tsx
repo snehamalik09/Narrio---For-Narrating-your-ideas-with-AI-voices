@@ -42,7 +42,7 @@ const Discover = () => {
                                     <Image alt='thumbnail' src={data.imgUrl} width={150} height={150} className='aspect-square rounded-lg object-cover' />
                                     <div className="w-full">
                                         <h1 className='text-14 font-bold truncate'>{data.podcastTitle}</h1>
-                                        <h1 className='text-12 truncate'>authorName</h1>
+                                        <h1 className='text-12 truncate'>{data.author}</h1>
                                     </div>
                                 </figure>
                             )
