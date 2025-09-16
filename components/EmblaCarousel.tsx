@@ -10,6 +10,7 @@ import { IAuthor } from "@/types";
 import LoaderSpinner from './LoaderSpinner';
 import CarouselCard from './CarouselCard';
 
+
 interface CarouselProps {
   fansLikeDetails: IAuthor[];
 }
@@ -43,7 +44,7 @@ const EmblaCarousel = ({ fansLikeDetails }: CarouselProps) => {
     <section className="flex w-full flex-col gap-4 overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {slides.slice(0, 5).map((item, index) => (
-            <CarouselCard item={item} index={index} key={index} />
+            <CarouselCard item={item} index={index} key={index}  />
           ))}
       </div>
 

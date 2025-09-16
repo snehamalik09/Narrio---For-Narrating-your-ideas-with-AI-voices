@@ -36,6 +36,10 @@ export interface IAuthor extends Document {
   podcasts: [mongoose.Schema.Types.ObjectId];
 }
 
+export interface AuthorPodcastsResponse {
+  totalPodcasts: IPodcast[];
+}
+
 
 export interface IGeneratePodcastProps {
   voicePrompt: string;

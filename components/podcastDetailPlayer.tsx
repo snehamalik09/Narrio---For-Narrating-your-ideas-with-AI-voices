@@ -10,13 +10,15 @@ import { RootState } from '@/store/store';
 import { setPodcast } from '@/store/slices/playerSlice';
 import { pause, play } from '@/store/slices/playerSlice';
 import { useUser } from '@clerk/nextjs'
+import { motion, AnimatePresence } from "framer-motion";
+
 
 const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, audioUrl, podcastID, authorID, authorName, authorImgUrl }: {
   podcastThumbnail: string;
   podcastTitle: string;
   audioDuration: number;
   audioUrl: string;
-  authorID?: string;
+  authorID: string;
   authorName?: string;
   authorImgUrl?: string;
   podcastID: string;
@@ -87,9 +89,9 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
         <h1 className='font-bold text-20 text-white'>{podcastTitle}</h1>
 
         <div className='flex items-center gap-2' >
-          {authorImgUrl && <Image src={authorImgUrl} alt="author Image" width={30} height={30} className='rounded-full' />}
+          {authorImgUrl && <Image src={authorImgUrl} alt="author Image" width={30} height={30} className='rounded-full cursor-pointer' onClick={() => router.push(`/profile/${authorID}`)}  />}
 
-          <p className='text-12 font-normal'>{authorName}</p>
+          <p className='text-12 font-normal cursor-pointer' onClick={() => router.push(`/profile/${authorID}`)}>{authorName}</p>
         </div>
 
         <div
@@ -138,21 +140,37 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
 
         </div>
       }
-      {confirmDelete &&
-        <div className='fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center transition-all duration-700 shadow-2xl'>
-          <div className="bg-orange-500 rounded-lg p-6 text-center shadow-lg flex flex-col gap-8 text-16 font-bold">
-            <p className='whitespace-nowrap'> Are you sure you want to delete the podcast permanently ? </p>
-            <div className='flex justify-between w-full gap-2'>
-              <div onClick={handleDeletePodcast}  className='bg-orange-700 shadow-xl text-center w-full cursor-pointer text-20 transition-colors duration-300 hover:bg-orange-800 '>
-                <Button className='cursor-pointer'> Yes </Button>
+      <AnimatePresence>
+        {confirmDelete &&
+          <div
+            className='fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center transition-all duration-500 shadow-2xl'>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: -100 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              transition={{ duration: 0.5 }}
+              className="bg-orange-500 rounded-lg p-6 text-center shadow-lg flex flex-col gap-8 text-16 font-bold">
+              <p className='whitespace-nowrap'> Are you sure you want to delete this podcast permanently ? </p>
+              <div className='flex justify-between w-full gap-2'>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  onClick={handleDeletePodcast} className='bg-orange-700 shadow-xl text-center w-full cursor-pointer text-20 transition-colors duration-300 hover:bg-orange-800 '>
+                  <Button className='cursor-pointer'> Yes </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  onClick={() => setConfirmDelete(false)} className='bg-orange-700 shadow-xl text-center w-full cursor-pointer text-20 transition-colors duration-300 hover:bg-orange-800 '>
+                  <Button className='cursor-pointer' > Cancel </Button>
+                </motion.div>
               </div>
-              <div onClick={() => setConfirmDelete(false)} className='bg-orange-700 shadow-xl text-center w-full cursor-pointer text-20 transition-colors duration-300 hover:bg-orange-800 '>
-                <Button className='cursor-pointer' > Cancel </Button>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      }
+        }
+      </AnimatePresence>
     </div>
 
   )

@@ -24,6 +24,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "fluent-ffmpeg": "^2.1.3",
+    "framer-motion": "^12.23.13",
     "lucide-react": "^0.542.0",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.0",

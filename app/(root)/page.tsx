@@ -6,6 +6,7 @@ import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation
 import PodcastDetailPlayer from "@/components/PodcastDetailPlayer";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { Edit } from "lucide-react";
+import podcastDetails from "./podcast/[podcastID]/page";
 
 const Home = () => {
 
@@ -37,14 +38,14 @@ const Home = () => {
 
 export default Home;
 
-// ask user are you sure before deleting
-// Views an dpodcast count
-// when deleting podcast delete attached audio and image
+// hover effects
+// Views an podcast count/profile page
 // change the auth-log0
 // protecting every route
 // edit fucntionality
 // generate thumbnail cracked
-// author details page
-// profile page
+// some glitch while playing podcastDetails, it gets paused
+// while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
+// when deleting podcast delete attached audio and image
 // playing audio even after the podcast submitted for a few seconds until everything gets cleared
 

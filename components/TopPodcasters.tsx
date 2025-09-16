@@ -3,10 +3,12 @@
 import React from 'react'
 import { useGetTopPodcastersQuery } from "@/store/api/podcastApi";
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 
 const TopPodcasters = () => {
-  const { data: podcastData, isLoading, error, refetch } = useGetTopPodcastersQuery()
+  const { data: podcastData, isLoading, error, refetch } = useGetTopPodcastersQuery();
+  const router = useRouter();
 
   return (
     <>
@@ -14,6 +16,7 @@ const TopPodcasters = () => {
         {podcastData?.map((data, index) => {
           return (
             <figure
+              onClick={() => router.push(`/profile/${data.clerkID}`)}
               key={index}
               className="flex items-center gap-3 w-full cursor-pointer"
             >
