@@ -38,13 +38,11 @@ const Home = () => {
 
 export default Home;
 
-// hover effects
 // Views an podcast count/profile page
-// change the auth-log0
-// protecting every route
 // edit fucntionality
 // generate thumbnail cracked
-// some glitch while playing podcastDetails, it gets paused
+// all authors page
+// play podcast placement
 // while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
 // when deleting podcast delete attached audio and image
 // playing audio even after the podcast submitted for a few seconds until everything gets cleared

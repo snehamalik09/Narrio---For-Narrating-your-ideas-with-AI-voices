@@ -31,8 +31,10 @@ const GlobalPlayer = () => {
     }, [isPlaying]);
 
     useEffect(() => {
-        console.log('audio url is : ', audioUrl);
-
+        if(audioUrl && audioRef.current && isPlaying){
+            // audioRef.current.load(  );
+            audioRef.current.play();
+        }
     }, [audioUrl]);
 
     useEffect(() => {

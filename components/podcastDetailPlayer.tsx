@@ -81,8 +81,8 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
     <div className="flex gap-12 pt-8 justify-center relative">
 
 
-      <div className="">
-        <Image src={podcastThumbnail} alt='podcastThumbnail' width={200} height={200} className='rounded-xl' />
+      <div className="w-[200px] h-[200px]">
+        <Image src={podcastThumbnail} alt='podcastThumbnail' width={200} height={200} className='rounded-xl object-cover w-full h-full' />
       </div>
       <div className="flex-1 flex flex-col  gap-2 pt-7 ">
 
@@ -98,12 +98,16 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
           onClick={() => {
             isPlaying && pID === podcastID ? dispatch(pause()) : handlePlayPodcast();
           }}
-          className="bg-gradient-to-r from-orange-500 to-red-500 text-white 
-             font-semibold flex justify-center items-center gap-2 
-             cursor-pointer w-60 py-1 rounded-full 
-             shadow-lg hover:shadow-xl 
-             transition-all duration-500 ease-in-out 
-             hover:scale-105 active:scale-100 absolute bottom-12"
+
+             className="
+               bg-gradient-to-r from-orange-500 to-red-500 text-white 
+               font-semibold flex justify-center items-center gap-2 
+               cursor-pointer absolute bottom-12 w-60 py-1 rounded-full shadow-lg 
+               transition-all duration-500 ease-in-out
+               hover:scale-102 hover:shadow-2xl 
+               hover:bg-gradient-to-l hover:from-orange-600 hover:to-red-600
+               active:scale-95
+             "
         >
           <Image
             src={isPlaying && pID === podcastID ? '/icons/Pause.svg' : '/icons/Play.svg'}
@@ -127,11 +131,11 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
 
 
             <div className='absolute z-50 rounded-xl right-0 top-6 pr-12 pl-3 text-left py-4 bg-black-1 text-14' ref={dropdownRef}>
-              <div className='flex justify-start gap-2 pb-2 cursor-pointer'>
+              <div className='flex justify-start gap-2 pb-2 cursor-pointer  active:scale-95'>
                 <Image src='/icons/edit.svg' alt='edit' width={20} height={20} />
                 <p>Edit</p>
               </div>
-              <div className='flex justify-start gap-2 cursor-pointer' onClick={() => setConfirmDelete(true)}>
+              <div className='flex justify-start gap-2 cursor-pointer active:scale-95' onClick={() => setConfirmDelete(true)}>
                 <Image src='/icons/delete.svg' alt='delete' width={20} height={20} />
                 <p>Delete</p>
               </div>

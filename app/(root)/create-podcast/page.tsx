@@ -12,6 +12,8 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { generateSignature } from "@/lib/generateSignature";
 import { base64ToBlob } from "@/lib/base64ToBlob";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import {
     Select,
     SelectContent,
@@ -37,7 +39,8 @@ const formSchema = z.object({
 })
 
 const CreatePodcast = () => {
-
+    const { user, isSignedIn } = useUser();
+    const router = useRouter();
     const [publishPodcast] = useCreatePodcastMutation();
     const [voicePrompt, setVoicePrompt] = useState<string>("");
     const [voiceType, setVoiceType] = useState<string | null>(null);
@@ -153,6 +156,13 @@ const CreatePodcast = () => {
 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        if (!isSignedIn) {
+            toast.error("You must be signed in to submit a podcast");
+            setTimeout(() => {
+                router.push("/sign-in");
+            }, 2000);
+            return;
+        }
         console.log(values);
         setIsSubmitting(true);
 
@@ -310,7 +320,7 @@ const CreatePodcast = () => {
 
                         <div className="w-full flex flex-col gap-2.5">
                             <Label htmlFor="voice-type" className='text-16 font-bold text-white'> Category</Label>
-                            <Select value={voiceType??''} onValueChange={(value) => setVoiceType(value)}>
+                            <Select value={voiceType ?? ''} onValueChange={(value) => setVoiceType(value)}>
                                 <SelectTrigger id="voice-type" className="w-full bg-black-1 border-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c] ">
                                     <SelectValue placeholder="Select AI Voice" className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-[#15171c]" />
                                 </SelectTrigger>

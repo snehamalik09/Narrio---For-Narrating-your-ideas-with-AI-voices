@@ -37,7 +37,7 @@ const RightSideBar = () => {
                     <div className="flex justify-between text-16 gap-2 md:gap-4 font-bold">
                         <p>Fans Also Like</p>
                         <Link href='/discover'>
-                            <button className="text-orange-500 font-semibold cursor-pointer">See All</button>
+                            <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
                         </Link>
                     </div>
 
@@ -47,7 +47,7 @@ const RightSideBar = () => {
                         <div className="flex justify-between">
                             <p>Top Podcasters</p>
                             <Link href='/discover'>
-                                <button className="text-orange-500 font-semibold cursor-pointer">See All</button>
+                                <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
                             </Link>
                         </div>
                         <TopPodcasters />
