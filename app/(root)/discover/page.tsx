@@ -1,7 +1,7 @@
 'use client'
 
 import SearchBar from "@/components/SearchBar";
-import { useGetPodcastsQuery } from "@/store/api/podcastApi";
+import { useGetPodcastsQuery, useGetTopPodcastersQuery } from "@/store/api/podcastApi";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -17,6 +17,7 @@ const Discover = () => {
     const search = searchParams.get("search") || "";
     console.log("searchParams dicover : ", search);
     const { data: podcastData, isLoading, error, refetch } = useGetPodcastBySearchQuery({search});
+    const { data: allAuthors } = useGetTopPodcastersQuery();
     const router = useRouter();
 
     function handleViews(podcastID: string) {
@@ -33,8 +34,8 @@ const Discover = () => {
 
                 {isLoading && <LoaderSpinner/>}
 
-                {podcastData && podcastData.length>0 ? (
-
+                { (podcastData && podcastData.length>0) || (allAuthors && allAuthors.length>0)   ? (
+                    <>
                     <div className='podcast_grid'>
                         {podcastData?.map((data, index) => {
                             return (
@@ -48,6 +49,25 @@ const Discover = () => {
                             )
                         })}
                     </div>
+
+                    {/* <div className="w-full h-[0.5] min-h-0.5 bg-black/60 !my-9"></div> */}
+
+                    <h1 className="text-20 font-bold !mb-6 !mt-10">Explore Podcasters</h1>
+
+                    <div className='podcast_grid !mb-20'>
+                        {allAuthors?.map((data, index) => {
+                            return (
+                                <figure key={index} className='flex flex-col gap-2 cursor-pointer w-[150px]' onClick={() => router.push(`/profile/${data?.clerkID}`, { 'scroll': true }) }>
+                                    <Image alt='thumbnail' src={data.imgUrl} width={150} height={150} className='aspect-square rounded-lg object-cover' />
+                                    <div className="w-full">
+                                        <h1 className='text-14 font-bold truncate'>{data.username}</h1>
+                                        {/* <h1 className='text-12 truncate'>{data.author}</h1> */}
+                                    </div>
+                                </figure>
+                            )
+                        })}
+                    </div>
+                    </>
 
                 ) : (
                     <EmptyState title="No results found" search='yes' buttonLink="/" />

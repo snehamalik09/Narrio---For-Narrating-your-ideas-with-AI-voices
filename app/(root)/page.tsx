@@ -41,8 +41,7 @@ export default Home;
 // Views an podcast count/profile page
 // edit fucntionality
 // generate thumbnail cracked
-// all authors page
-// play podcast placement
+// userButton on mobilenav
 // while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
 // when deleting podcast delete attached audio and image
 // playing audio even after the podcast submitted for a few seconds until everything gets cleared

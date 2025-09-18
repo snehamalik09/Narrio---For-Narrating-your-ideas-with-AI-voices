@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react'
-import { useGetPodcastsByAuthorIdQuery } from "@/store/api/podcastApi";
+import { useGetPodcastsByAuthorIdQuery, useGetProfileByIdQuery } from "@/store/api/podcastApi";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect, useRef } from 'react';
@@ -19,16 +19,19 @@ const Profile = () => {
     const params = useParams();
     const id = params.clerkID as string;
 
-    const dispatch = useDispatch();
-
-    const { data: allPocasts, isLoading, error } = useGetPodcastsByAuthorIdQuery({ id });
     const { podcastID: pID, title, imgUrl, audioUrl: audio, isPlaying, author, audioDuration: duration } = useSelector((state: RootState) => state.player)
-
-
+    const { data: allPocasts, isLoading, error } = useGetPodcastsByAuthorIdQuery({ id });
     const authorImageUrl = allPocasts?.totalPodcasts[0]?.authorImgUrl;
     const authorName = allPocasts?.totalPodcasts[0]?.author;
+    const { data: PodcasterDetails, isLoading: podcasterLoading } = useGetProfileByIdQuery({ id });
+     const dispatch = useDispatch(); 
+    
 
-    if(isLoading)
+    useEffect(()=>{
+        console.log("allpodcasts : ", allPocasts);
+    }, [allPocasts]);
+
+    if(isLoading || podcasterLoading)
             return <LoaderSpinner/>
 
     async function handlePlayPodcast() {
@@ -54,7 +57,7 @@ const Profile = () => {
                 <h1 className="text-20 font-bold"> Podcaster Profile </h1>
 
 
-                <div className="grid grid-cols-3 gap-12 !mt-8 items-start ">
+                <div className=" flex flex-col !mx-auto xl:grid xl:grid-cols-3 gap-12 !mt-8 items-start ">
                     <div className="flex justify-center ">
                         {authorImageUrl && (
                             <div className="w-[300px] h-[300px] relative">
@@ -74,11 +77,13 @@ const Profile = () => {
                         {/* view */}
                         <div className="flex gap-2.5 items-center">
                             <Image src={'/icons/Play.svg'} alt="Play" width={24} height={24} />
+                            <p>{PodcasterDetails?.totalViews}</p>
                             <p>Plays</p>
                         </div>
 
                         <div className="flex gap-2.5 items-center">
                             <Image src={'/icons/headphone.svg'} alt="headphones" width={24} height={24} />
+                            <p></p>
                             <p>Total Podcasts</p>
                         </div>
                     </div>

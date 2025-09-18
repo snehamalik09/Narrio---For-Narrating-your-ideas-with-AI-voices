@@ -40,6 +40,43 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PATCH(req: Request) {
+  await connectDB();
+  const body = await req.json();
+  const { id } = body;
+
+  const user = await currentUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const updatedPodcast = await Podcast.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true } 
+    );
+
+    if (!updatedPodcast) {
+      return NextResponse.json({ error: "Podcast not found" }, { status: 404 });
+    }
+
+    const authorID = updatedPodcast.authorID;
+    const updatedAuthor = await Author.findOneAndUpdate({clerkID:updatedPodcast.authorID}, { $inc : {totalViews:1}}, {new:true});
+
+
+    return NextResponse.json(updatedPodcast, { status: 200 });
+  } catch (error) {
+    console.error("Error updating podcast views:", error);
+    return NextResponse.json(
+      { error: "Failed to update podcast views" },
+      { status: 400 }
+    );
+  }
+}
+
+
+
 async function addAuthor(user: any, podcastId: string) {
   const author = await Author.findOne({ clerkID: user.id });
 

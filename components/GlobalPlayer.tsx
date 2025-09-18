@@ -6,10 +6,14 @@ import Image from 'next/image'
 import { RootState } from '@/store/store'
 import { play, pause } from '@/store/slices/playerSlice';
 import { usePathname } from 'next/navigation';
+import { useUpdateViewsMutation } from '@/store/api/podcastApi';
 
 const GlobalPlayer = () => {
-    const { title, imgUrl, audioUrl, author, audioDuration, isPlaying } = useSelector((state: RootState) => state.player);
+    const { title, imgUrl, audioUrl, author, audioDuration, isPlaying, podcastID } = useSelector((state: RootState) => state.player);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const playedTime = useRef(0);
+    const lastTime = useRef(0);
+    const [hasCounted, setHasCounted] = useState(false);
     const [currentTime, setCurrentTime] = useState('');
     const [totalTime, setTotalTime] = useState(0);
     const [currentSeconds, setCurrentSeconds] = useState(0);
@@ -19,6 +23,7 @@ const GlobalPlayer = () => {
     const progressBarRef = useRef<HTMLDivElement>(null);
     const volumeBarRef = useRef<HTMLDivElement>(null);
     const [volume, setVolume] = useState(1);
+    const [updateViews] = useUpdateViewsMutation();
 
     useEffect(() => {
         if (audioRef.current) {
@@ -31,11 +36,42 @@ const GlobalPlayer = () => {
     }, [isPlaying]);
 
     useEffect(() => {
-        if(audioUrl && audioRef.current && isPlaying){
+        if (podcastID && audioRef.current && isPlaying) {
             // audioRef.current.load(  );
             audioRef.current.play();
         }
-    }, [audioUrl]);
+    }, [podcastID]);
+
+    //Count views
+    // useEffect(() => {
+    //     const audio = audioRef.current;
+    //     if (!audio || !podcastID) return;
+
+    //     function handleTimeUpdate() {
+    //         if ( audio && !audio.seeking && !audio.paused) {
+    //             const current = Math.floor(audio.currentTime);
+
+    //             if (current > lastTime.current) {
+    //                 playedTime.current += current - lastTime.current;
+    //                 lastTime.current = current;
+    //             }
+
+    //             if (playedTime.current >= 10 && !hasCounted) {
+    //                 updateViews({ id: podcastID });
+    //                 setHasCounted(true);
+    //             }
+    //         }
+    //     }
+
+    //     audio.addEventListener("timeupdate", handleTimeUpdate);
+
+    //     return () => {
+    //         audio.removeEventListener("timeupdate", handleTimeUpdate);
+    //         lastTime.current = 0;
+    //         playedTime.current = 0;
+    //         setHasCounted(false);
+    //     };
+    // }, [podcastID]);
 
     useEffect(() => {
         if (audioDuration)
@@ -76,36 +112,35 @@ const GlobalPlayer = () => {
     }
 
     const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-  if (!audioRef.current || !progressBarRef.current) return
+        if (!audioRef.current || !progressBarRef.current) return
 
-  const rect = progressBarRef.current.getBoundingClientRect()
-  const clickX = e.clientX - rect.left
-  const percentage = clickX / rect.width
-  const newTime = percentage * totalTime
+        const rect = progressBarRef.current.getBoundingClientRect()
+        const clickX = e.clientX - rect.left
+        const percentage = clickX / rect.width
+        const newTime = percentage * totalTime
 
-  audioRef.current.currentTime = newTime
-  setCurrentSeconds(newTime)
-}
+        audioRef.current.currentTime = newTime
+        setCurrentSeconds(newTime)
+    }
 
 
 
-const handleVolume = (e: React.MouseEvent<HTMLDivElement>) => {
-  if (!audioRef.current || !volumeBarRef.current) return;
+    const handleVolume = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!audioRef.current || !volumeBarRef.current) return;
 
-  const rect = volumeBarRef.current.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); // clamp 0-1
+        const rect = volumeBarRef.current.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); // clamp 0-1
 
-  audioRef.current.volume = percentage;
-  setVolume(percentage);
-};
+        audioRef.current.volume = percentage;
+        setVolume(percentage);
+    };
 
 
 
     return (
 
-        <div  className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-[14%] flex flex-col " >
-            {/* <div className={'bg-white p-0.5'} style={{ width: `${(currentSeconds / totalTime) * 100}%` }}></div> */}
+        <div className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-auto flex flex-col z-50">
             <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
                 <div
                     className="bg-white h-1"
@@ -118,19 +153,21 @@ const handleVolume = (e: React.MouseEvent<HTMLDivElement>) => {
                 ></div>
             </div>
 
-            <div className=" flex justify-around p-3">
-                <div className='flex flex-1 gap-5'>
+            <div className=" flex md:flex-row justify-between items-center gap-4 p-3">
+                <div className='flex items-center gap-3 w-full md:w-1/3'>
                     <Image src={imgUrl} alt='thubmnail' width={70} height={50} />
-                    <div className='flex flex-col gap-1'>
+                    <div className='font-bold text-sm md:text-base truncate max-w-[120px] md:max-w-[200px]'>
                         <h2 className='font-bold text-14'>{title}</h2>
                         <p className='text-12'>{author}</p>
                     </div>
                 </div>
 
-                <div className='flex flex-1 flex-row gap-2.5 justify-center items-center'>
+                <div className='flex items-center gap-3 md:gap-5 w-full md:w-1/3 justify-center'>
 
-                    <Image src='/icons/reverse.svg' alt='reverse' width={25} height={25} className='cursor-pointer' onClick={handleReverse} />
-                    <p className='text-12'>-15</p>
+                    <div className="flex flex-col items-center cursor-pointer" onClick={handleReverse}>
+                        <Image src="/icons/reverse.svg" alt="reverse" width={22} height={22} />
+                        <p className="text-[10px] md:text-xs">-15</p>
+                    </div>
 
 
 
@@ -139,19 +176,21 @@ const handleVolume = (e: React.MouseEvent<HTMLDivElement>) => {
                     ) : <Image src='/icons/Play.svg' alt='play button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(play())} />
                     }
 
-                    <p className='text-12'>+15</p>
-                    <Image src='/icons/forward.svg' alt='forward' width={25} height={25} className='cursor-pointer' onClick={handleForward} />
+                    <div className="flex flex-col items-center cursor-pointer" onClick={handleForward}>
+                        <Image src="/icons/forward.svg" alt="forward" width={22} height={22} />
+                        <p className="text-[10px] md:text-xs">+15</p>
+                    </div>
                 </div>
 
-                <div className='flex flex-1 flex-row gap-2.5 justify-center items-center'>
-                    <p className='text-12'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
+                <div className='hidden md:flex items-center gap-3 w-full md:w-1/3 justify-end md:justify-center'>
+                    <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
                     {isMute ? <Image src='/icons/unmute.svg' alt='unmute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(false)} /> :
                         <Image src='/icons/mute.svg' alt='mute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(true)} />
                     }
 
 
-                    <div ref={volumeBarRef} className='bg-gray-700 h-1 w-30 cursor-pointer rounded-lg' onClick={handleVolume}>
-                        <div className='bg-white h-1 w-full rounded-lg' style={{width:`${volume*100}%`}}></div>
+                    <div ref={volumeBarRef} className='hidden sm:block bg-gray-700 h-1 w-20 cursor-pointer rounded-lg' onClick={handleVolume}>
+                        <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
                     </div>
                 </div>
 

@@ -36,7 +36,7 @@ const podcastDetails = () => {
                     <h1 className="text-20 font-bold"> Currently Playing </h1>
                     <div className='flex justify-between gap-2'>
                         <Image alt="headphones" src='/icons/headphone.svg' width={24} height={24} />
-                        <p className='font-bold tet-16'>views</p>
+                        <p className='font-bold tet-16'>{data?.views}</p>
                     </div>
                 </header>
 
@@ -46,23 +46,23 @@ const podcastDetails = () => {
                         <PodcastDetailPlayer podcastID={data._id} podcastThumbnail={data.imgUrl} podcastTitle={data.podcastTitle} audioDuration={data.audioDuration} audioUrl={data.audioUrl} authorID={data.authorID} authorName={data.author} authorImgUrl={data.authorImgUrl}  />
                     }
 
-                    <p className='text-16 pt-[20px] font-normal max-md:text-center text-white'>{data?.podcastDescription}</p>
+                    <p className=' text-12 md:text-16 pt-[20px] font-normal max-md:text-left text-white'>{data?.podcastDescription}</p>
 
                     <div className='flex flex-col gap-8 w-full'>
                         <div className='flex flex-col gap-4'>
-                            <h1 className='text-18 text-white font-bold'>Transcription</h1>
-                            <p className='text-16 font-normal text-white'>{data?.voicePrompt}</p>
+                            <h1 className='text-20 text-white font-bold'>Transcription</h1>
+                            <p className='text-12 md:text-16 font-normal text-white'>{data?.voicePrompt}</p>
                         </div>
                         {data?.imgPrompt && (
                             <div className='flex flex-col gap-4'>
-                                <h1 className='text-18 text-white font-bold'>Thumbnail Prompt</h1>
-                                <p className='text-16 font-normal text-white'>{data?.imgPrompt}</p>
+                                <h1 className='text-14 md:text-16 text-white font-bold'>Thumbnail Prompt</h1>
+                                <p className='text-12 md:text-16 font-normal text-white'>{data?.imgPrompt}</p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {<section className='flex flex-col !mt-8 gap-5 !mb-20'>
+                {<section className='flex flex-col !mt-8 gap-5 !mb-30 md:!mb-20'>
                     <h1 className='text-20 text-white font-bold'>Similar Podcasts</h1>
                     {similarPodcasts && similarPodcasts.totalPodcasts && similarPodcasts.totalPodcasts.length <= 0 ? <EmptyState title='tst' buttonLink='/discover' search='no' /> :
                         (

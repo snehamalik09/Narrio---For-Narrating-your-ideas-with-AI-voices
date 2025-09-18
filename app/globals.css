@@ -81,7 +81,7 @@ html {
   /* bg-black-1 placeholder:text-gray-1 text-gray-1 */
 
   @utility podcast_grid {
-    @apply grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4;
+    @apply grid  gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4;
   }
    @utility right_sidebar {
     @apply sticky right-0 top-0 flex w-[310px] flex-col overflow-y-hidden border-none px-[30px] pt-8 max-xl:hidden; /*  bg-black-1 */  

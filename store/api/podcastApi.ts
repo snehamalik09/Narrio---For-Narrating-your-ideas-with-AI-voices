@@ -18,6 +18,16 @@ export const podcastApi = createApi({
       }),
       invalidatesTags: ['Podcast'],
     }),
+
+    updateViews: builder.mutation<IPodcast, {id:string}>({
+      query: ({id}) => ({
+        url: 'podcast',
+        method: 'PATCH',
+        body:{id},
+      }),
+      invalidatesTags: ['Podcast'],
+    }),
+
     getPodcastById: builder.query<IPodcast, { id: string }>({
       query: ({ id }) => `podcast/${id}`,
       providesTags: ['Podcast'],
@@ -72,4 +82,4 @@ export const podcastApi = createApi({
   }),
 })
 
-export const { useGetPodcastsQuery, useGetProfileByIdQuery, useGetTopPodcastersQuery, useGetPodcastsByAuthorIdQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi
+export const { useGetPodcastsQuery, useUpdateViewsMutation, useGetProfileByIdQuery, useGetTopPodcastersQuery, useGetPodcastsByAuthorIdQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi
