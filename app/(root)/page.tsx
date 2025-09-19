@@ -3,10 +3,9 @@
 import PodcastCard from "@/components/PodcastCard";
 import { useEffect, useState } from 'react';
 import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation } from "@/store/api/podcastApi";
-import PodcastDetailPlayer from "@/components/PodcastDetailPlayer";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { Edit } from "lucide-react";
-import podcastDetails from "./podcast/[podcastID]/page";
+import PodcastDetails from "./podcast/[podcastID]/page";
 
 const Home = () => {
 

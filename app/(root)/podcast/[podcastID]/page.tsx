@@ -13,7 +13,7 @@ import EmptyState from '@/components/EmptyState'
 import PodcastCard from '@/components/PodcastCard'
 import PodcastDetailPlayer from '@/components/PodcastDetailPlayer'
 
-const podcastDetails = () => {
+const PodcastDetails = () => {
     const params = useParams();
     const id = params.podcastID as string;
     const { data, error, isLoading, refetch } = useGetPodcastByIdQuery({ id });
@@ -83,4 +83,4 @@ const podcastDetails = () => {
     )
 }
 
-export default podcastDetails
+export default PodcastDetails
