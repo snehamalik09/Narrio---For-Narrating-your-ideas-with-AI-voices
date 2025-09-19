@@ -75,7 +75,7 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
   }
 
   return(
-    <div className="flex flex-col md:flex-row gap-6 md:gap-12 pt-8 justify-center relative">
+    <div className="flex flex-col md:flex-row gap-6 md:gap-12 py-8 justify-center relative">
 
   <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] mx-auto md:mx-0">
     <Image

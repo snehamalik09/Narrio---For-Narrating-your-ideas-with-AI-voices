@@ -4,7 +4,12 @@ import RightSideBar from "@/components/RightSideBar";
 import Image from "next/image";
 import { Toaster } from "@/components/ui/sonner"
 import GlobalPlayer from "@/components/GlobalPlayer";
-
+import {
+    SignInButton,
+    SignedIn,
+    SignedOut,
+    UserButton
+} from '@clerk/nextjs'
 
 export default function RootLayout({
   children,
@@ -14,24 +19,37 @@ export default function RootLayout({
   return (
     <div className=' relative text-white flex flex-col'>
       <main className='relative flex'>
-        <LeftSideBar/>
+        <LeftSideBar />
         <section className=" flex flex-col min-h-screen flex-1 px-4 sm:px-14">
           <div className="mx-auto flex flex-col w-full max-w-5xl px-5 py-7 max-sm:px-4">
-            <div className="md:hidden flex items-center jsutify-between h-16">
+            <div className="lg:hidden flex items-center justify-between h-16">
               <Image src='/icons/logo.svg' alt="menu logo" width={30} height={30} />
-              <MobileNav/>
+              <div className="xl:hidden">
+                  <SignedOut>
+                    <SignInButton>
+                      <button className='text-12 font-bold bg-orange-500 text-white px-6 py-1 cursor-pointer rounded-lg'>
+                        Sign In
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+              </div>
+
+              <MobileNav />
             </div>
             <div className="flex flex-col">
               <Toaster position='top-center' richColors theme='light' />
               {children}
-              <GlobalPlayer/>
+              <GlobalPlayer />
             </div>
           </div>
-          
+
         </section>
-        
-        <RightSideBar/>
-        </main>
+
+        <RightSideBar />
+      </main>
     </div>
   );
 }

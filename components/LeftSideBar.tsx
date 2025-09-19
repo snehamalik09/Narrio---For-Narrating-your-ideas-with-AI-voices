@@ -12,7 +12,7 @@ const LeftSideBar = () => {
 
   return (
     <section className="text-white bg-black-1 min-h-screen">
-      <MobileNav/>
+      {/* <MobileNav/> */}
       <nav className="left_sidebar gap-7">
         <Link href="/" className="flex gap-2 md:gap-4 text-2xl pl-[10px]">
           <Image alt="logo" src="/icons/logo.svg" width={23} height={27} />
