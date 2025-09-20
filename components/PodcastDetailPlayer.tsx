@@ -75,7 +75,7 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
   }
 
   return(
-    <div className="flex flex-col md:flex-row gap-6 md:gap-12 py-8 justify-center relative">
+    <div className="flex flex-col md:flex-row gap-6 md:gap-12 py-5 md:py-8 justify-center relative">
 
   <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] mx-auto md:mx-0">
     <Image
@@ -120,7 +120,7 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
         bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold
         flex justify-center items-center gap-2 cursor-pointer
         absolute md:static !mt-20 md:!mt-0 md:bottom-12 left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0
-        w-fit md:w-60 py-2 px-4 md:px-6 rounded-full shadow-lg
+        w-[60%] md:w-60 py-2 px-6 md:px-6 rounded-full shadow-lg
         transition-all duration-500 ease-in-out
         hover:scale-102 hover:shadow-2xl 
         hover:bg-gradient-to-l hover:from-orange-600 hover:to-red-600

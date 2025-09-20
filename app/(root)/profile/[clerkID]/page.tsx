@@ -24,15 +24,15 @@ const Profile = () => {
     const authorImageUrl = allPocasts?.totalPodcasts[0]?.authorImgUrl;
     const authorName = allPocasts?.totalPodcasts[0]?.author;
     const { data: PodcasterDetails, isLoading: podcasterLoading } = useGetProfileByIdQuery({ id });
-     const dispatch = useDispatch(); 
-    
+    const dispatch = useDispatch();
 
-    useEffect(()=>{
+
+    useEffect(() => {
         console.log("allpodcasts : ", allPocasts);
     }, [allPocasts]);
 
-    if(isLoading || podcasterLoading)
-            return <LoaderSpinner/>
+    if (isLoading || podcasterLoading)
+        return <LoaderSpinner />
 
     async function handlePlayPodcast() {
         const firstPodcast = allPocasts?.totalPodcasts?.[0];
@@ -124,14 +124,19 @@ const Profile = () => {
 
                 {<section className='flex flex-col gap-5 !mb-20'>
                     <h1 className='text-20 text-white font-bold'>All Podcasts</h1>
-                   
-                     {allPocasts && allPocasts.totalPodcasts && allPocasts.totalPodcasts.length <= 0 ?  <EmptyState title='No podcasts here yet. Explore others while you wait' buttonLink='/discover' search='no' />  :
+
+                    {allPocasts && allPocasts.totalPodcasts && allPocasts.totalPodcasts.length <= 0 ? <EmptyState title='No podcasts here yet. Explore others while you wait' buttonLink='/discover' search='no' /> :
                         (
                             <div className='podcast_grid'>
                                 {allPocasts?.totalPodcasts?.map((data, index) => {
                                     return (
-                                        <PodcastCard key={data._id} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
-                                    )
+                                        <PodcastCard
+                                            key={data?._id}
+                                            title={data?.podcastTitle || 'No Title'}
+                                            description={data?.podcastDescription || 'No description available'}
+                                            imgUrl={data?.imgUrl || '/fallback-image.png'}
+                                            podcastID={data?._id || ''}
+                                        /> )
                                 })}
                             </div>
                         )

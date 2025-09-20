@@ -18,11 +18,15 @@ const PodcastDetails = () => {
     const id = params.podcastID as string;
     const { data, error, isLoading, refetch } = useGetPodcastByIdQuery({ id });
 
-    const { data: similarPodcasts, isLoading: similarPodcastLoading } = useGetPodcastsByAuthorIdQuery({id:data?.authorID??''});
+    const { data: similarPodcasts, isLoading: similarPodcastLoading } = useGetPodcastsByAuthorIdQuery({ id: data?.authorID ?? '' });
     console.log('similar podcasts : ', similarPodcasts);
-    
 
-    
+    // useEffect(()=>{
+    //     allPodcasts = similarPodcasts.filter((data) => data.podcastID!=id);
+    // }, [similarPodcasts])
+
+
+
 
     if (isLoading || similarPodcastLoading) {
         return <LoaderSpinner />
@@ -43,7 +47,7 @@ const PodcastDetails = () => {
                 <div className='flex flex-col w-full gap-7'>
 
                     {data &&
-                        <PodcastDetailPlayer podcastID={data._id} podcastThumbnail={data.imgUrl} podcastTitle={data.podcastTitle} audioDuration={data.audioDuration} audioUrl={data.audioUrl} authorID={data.authorID} authorName={data.author} authorImgUrl={data.authorImgUrl}  />
+                        <PodcastDetailPlayer podcastID={data._id} podcastThumbnail={data.imgUrl} podcastTitle={data.podcastTitle} audioDuration={data.audioDuration} audioUrl={data.audioUrl} authorID={data.authorID} authorName={data.author} authorImgUrl={data.authorImgUrl} />
                     }
 
                     <p className=' text-12 md:text-16 pt-[20px] font-normal max-md:text-left text-white'>{data?.podcastDescription}</p>
@@ -69,8 +73,13 @@ const PodcastDetails = () => {
                             <div className='podcast_grid'>
                                 {similarPodcasts?.totalPodcasts?.map((data, index) => {
                                     return (
-                                        <PodcastCard key={data._id} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
-                                    )
+                                        <PodcastCard
+                                            key={data?._id}
+                                            title={data?.podcastTitle || 'No Title'}
+                                            description={data?.podcastDescription || 'No description available'}
+                                            imgUrl={data?.imgUrl || '/fallback-image.png'}
+                                            podcastID={data?._id || ''}
+                                        />)
                                 })}
                             </div>
                         )

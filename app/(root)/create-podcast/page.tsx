@@ -25,6 +25,7 @@ import GeneratePodcast from "@/components/GeneratePodcast";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
 import { Loader } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
+import { useUploadThumbnailMutation } from "@/store/api/podcastApi";
 import { useCreatePodcastMutation } from "@/store/api/podcastApi";
 
 
@@ -41,6 +42,7 @@ const formSchema = z.object({
 const CreatePodcast = () => {
     const { user, isSignedIn } = useUser();
     const router = useRouter();
+    const [uploadThumbnailMutation] = useUploadThumbnailMutation();
     const [publishPodcast] = useCreatePodcastMutation();
     const [voicePrompt, setVoicePrompt] = useState<string>("");
     const [voiceType, setVoiceType] = useState<string | null>(null);
@@ -66,22 +68,26 @@ const CreatePodcast = () => {
 
     const { reset } = form;
 
-    async function uploadThumbnailToCloudinary(base64Image: string | File) {
-        return new Promise<any>((resolve, reject) => {
-            const timestamp = Math.floor(Date.now() / 1000);
-            const paramsToSign = {
-                timestamp,
-                folder: "podcast_thumbnails", // Cloudinary folder
-            };
+    async function uploadThumbnailToCloudinary(image: File | string) {
+        let fileToUpload: File | Blob;
 
-            // Get signature from your API
+        if (typeof image === "string") {
+            const result = await uploadThumbnailMutation(image).unwrap();
+            return result;
+        } else {
+            fileToUpload = image;
+        }
+
+        const timestamp = Math.floor(Date.now() / 1000);
+        const paramsToSign = { timestamp, folder: "podcast_thumbnails" };
+
+        return new Promise<any>((resolve, reject) => {
             generateSignature({
                 paramsToSign,
                 callback: async (signature: string) => {
                     try {
-                        console.log("signature is : ", signature);
                         const formData = new FormData();
-                        formData.append("file", base64Image);
+                        formData.append("file", fileToUpload);
                         formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string);
                         formData.append("timestamp", timestamp.toString());
                         formData.append("signature", signature);
@@ -89,10 +95,7 @@ const CreatePodcast = () => {
 
                         const res = await fetch(
                             `https://api.cloudinary.com/v1_1/di2wbqdwj/image/upload`,
-                            {
-                                method: "POST",
-                                body: formData,
-                            }
+                            { method: "POST", body: formData }
                         );
 
                         const data = await res.json();
@@ -104,6 +107,7 @@ const CreatePodcast = () => {
             });
         });
     }
+
 
 
     async function uploadAudioToCloudinary(audioBlob: Blob) {
@@ -186,29 +190,15 @@ const CreatePodcast = () => {
                 console.log("audioBlob is prresnt.")
             }
 
-            if (imgFile) {
+            if (imgFile || imgUrl) {
                 try {
-                    const thumbnailUpload = await uploadThumbnailToCloudinary(imgFile);
+                    const thumbnailUpload = await uploadThumbnailToCloudinary(imgFile || imgUrl);
                     uploadedImgStorageID = thumbnailUpload.asset_id;
                     uploadedImgUrl = thumbnailUpload.secure_url;
                     setImgStorageID(thumbnailUpload.asset_id);
                     setImgUrl(thumbnailUpload.secure_url);
                     console.log("Thumbnail uploaded : ", thumbnailUpload);
-                }
-                catch (err) {
-                    toast.error("Error publishing the podcast");
-                    console.error("Error uploading thumbnail:", err);
-                }
-            } else if (imgUrl && imgUrl.startsWith("data:")) {
-                try {
-                    const thumbnailUpload = await uploadThumbnailToCloudinary(imgUrl);
-                    uploadedImgStorageID = thumbnailUpload.asset_id;
-                    uploadedImgUrl = thumbnailUpload.secure_url;
-                    setImgStorageID(thumbnailUpload.asset_id);
-                    setImgUrl(thumbnailUpload.secure_url);
-                    console.log("Thumbnail uploaded : ", thumbnailUpload);
-                }
-                catch (err) {
+                } catch (err) {
                     toast.error("Error publishing the podcast");
                     console.error("Error uploading thumbnail:", err);
                 }
@@ -368,6 +358,47 @@ const CreatePodcast = () => {
 
 
 export default CreatePodcast;
+
+
+
+// async function uploadThumbnailToCloudinary(base64Image: string | File) {
+//         return new Promise<any>((resolve, reject) => {
+//             const timestamp = Math.floor(Date.now() / 1000);
+//             const paramsToSign = {
+//                 timestamp,
+//                 folder: "podcast_thumbnails",
+//             };
+
+//             // Get signature from your API
+//             generateSignature({
+//                 paramsToSign,
+//                 callback: async (signature: string) => {
+//                     try {
+//                         console.log("signature is : ", signature);
+//                         const formData = new FormData();
+//                         formData.append("file", base64Image);
+//                         formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY as string);
+//                         formData.append("timestamp", timestamp.toString());
+//                         formData.append("signature", signature);
+//                         formData.append("folder", "podcast_thumbnails");
+
+//                         const res = await fetch(
+//                             `https://api.cloudinary.com/v1_1/di2wbqdwj/image/upload`,
+//                             {
+//                                 method: "POST",
+//                                 body: formData,
+//                             }
+//                         );
+
+//                         const data = await res.json();
+//                         resolve(data);
+//                     } catch (err) {
+//                         reject(err);
+//                     }
+//                 },
+//             });
+//         });
+//     }
 
 
 

@@ -25,6 +25,7 @@ const GlobalPlayer = () => {
     const [volume, setVolume] = useState(1);
     const [updateViews] = useUpdateViewsMutation();
 
+
     useEffect(() => {
         if (audioRef.current) {
             if (isPlaying)
@@ -137,68 +138,139 @@ const GlobalPlayer = () => {
     };
 
 
-
     return (
-
-        <div className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full h-auto flex flex-col z-50">
+        <div className="fixed bottom-[60px] md:bottom-0 left-0 w-full z-50 text-white bg-black/70 backdrop-blur-md flex flex-col md:h-auto h-[8vh]">
+            {/* Progress Bar */}
             <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
                 <div
                     className="bg-white h-1"
                     style={{ width: `${(currentSeconds / totalTime) * 100}%` }}
-                ></div>
-
+                />
                 <div
                     className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md"
                     style={{ left: `${(currentSeconds / totalTime) * 100}%` }}
-                ></div>
+                />
             </div>
 
-            <div className=" flex md:flex-row justify-between items-center gap-4 p-3">
-                <div className='flex items-center gap-3 w-full md:w-1/3'>
-                    <Image src={imgUrl} alt='thubmnail' width={70} height={50} />
-                    <div className='font-bold text-sm md:text-base truncate max-w-[120px] md:max-w-[200px]'>
-                        <h2 className='font-bold text-14'>{title}</h2>
-                        <p className='text-12'>{author}</p>
+            {/* Player Controls */}
+            <div className="flex flex-row justify-between items-center p-2 md:p-3 gap-2 md:gap-4">
+                {/* Left: Thumbnail & Info */}
+                <div className='flex items-center gap-2 md:gap-3 w-1/3'>
+                    <Image
+                        src={imgUrl}
+                        alt='thumbnail'
+                        width={50}
+                        height={50}
+                        className="rounded-sm w-[40px] h-[40px] md:w-[70px] md:h-[70px]"
+                    />
+                    <div className='truncate'>
+                        <h2 className='font-bold text-xs md:text-base lg:text-lg truncate'>{title}</h2>
+                        <p className='text-[10px] md:text-sm lg:text-base truncate'>{author}</p>
                     </div>
                 </div>
 
-                <div className='flex items-center gap-3 md:gap-5 w-full md:w-1/3 justify-center'>
-
-                    <div className="flex flex-col items-center cursor-pointer" onClick={handleReverse}>
-                        <Image src="/icons/reverse.svg" alt="reverse" width={22} height={22} />
-                        <p className="text-[10px] md:text-xs">-15</p>
+                {/* Center: Play Controls */}
+                <div className='flex items-center gap-2 md:gap-4 w-1/3 justify-center'>
+                    <div className="flex flex-col items-center cursor-pointer" onClick={() => audioRef.current && (audioRef.current.currentTime -= 15)}>
+                        <Image src="/icons/reverse.svg" alt="reverse" width={18} height={18} />
+                        <p className="text-[8px] md:text-[10px]">-15</p>
                     </div>
-
-
 
                     {isPlaying ? (
-                        <Image src='/icons/Pause.svg' alt='Pause button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(pause())} />
-                    ) : <Image src='/icons/Play.svg' alt='play button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(play())} />
-                    }
+                        <Image src='/icons/Pause.svg' alt='Pause' width={40} height={40} className='cursor-pointer' onClick={() => dispatch(pause())} />
+                    ) : (
+                        <Image src='/icons/Play.svg' alt='Play' width={40} height={40} className='cursor-pointer' onClick={() => dispatch(play())} />
+                    )}
 
-                    <div className="flex flex-col items-center cursor-pointer" onClick={handleForward}>
-                        <Image src="/icons/forward.svg" alt="forward" width={22} height={22} />
-                        <p className="text-[10px] md:text-xs">+15</p>
+                    <div className="flex flex-col items-center cursor-pointer" onClick={() => audioRef.current && (audioRef.current.currentTime += 15)}>
+                        <Image src="/icons/forward.svg" alt="forward" width={18} height={18} />
+                        <p className="text-[8px] md:text-[10px]">+15</p>
                     </div>
                 </div>
 
-                <div className='hidden md:flex items-center gap-3 w-full md:w-1/3 justify-end md:justify-center'>
+                {/* Right: Time & Volume */}
+                <div className='hidden md:flex items-center gap-2 md:gap-4 w-1/3 justify-end'>
                     <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
-                    {isMute ? <Image src='/icons/unmute.svg' alt='unmute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(false)} /> :
-                        <Image src='/icons/mute.svg' alt='mute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(true)} />
-                    }
-
+                    {isMute ? (
+                        <Image src='/icons/unmute.svg' alt='unmute' width={20} height={20} className='cursor-pointer' onClick={() => setIsMute(false)} />
+                    ) : (
+                        <Image src='/icons/mute.svg' alt='mute' width={20} height={20} className='cursor-pointer' onClick={() => setIsMute(true)} />
+                    )}
 
                     <div ref={volumeBarRef} className='hidden sm:block bg-gray-700 h-1 w-20 cursor-pointer rounded-lg' onClick={handleVolume}>
                         <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
                     </div>
                 </div>
-
-                <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />
             </div>
-        </div>
 
+            <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />
+        </div>
     )
 }
+   
+
 
 export default GlobalPlayer
+
+
+// return (
+
+//     <div className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full md:h-auto h-[8vh] flex flex-col z-50 !mb-13 !mt-5 md:!mb-0 md:!mt-0">
+//         <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
+//             <div
+//                 className="bg-white h-1"
+//                 style={{ width: `${(currentSeconds / totalTime) * 100}%` }}
+//             ></div>
+
+//             <div
+//                 className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md"
+//                 style={{ left: `${(currentSeconds / totalTime) * 100}%` }}
+//             ></div>
+//         </div>
+
+//         <div className=" flex md:flex-row justify-between items-center gap-4 p-2 md:p-3">
+//             <div className='flex items-center gap-3 w-full md:w-1/3'>
+//                 <Image src={imgUrl} alt='thubmnail' width={70} height={50} className='' />
+//                 <div className='font-bold text-sm md:text-base truncate max-w-[120px] md:max-w-[200px]'>
+//                     <h2 className='font-bold text-14'>{title}</h2>
+//                     <p className='text-12'>{author}</p>
+//                 </div>
+//             </div>
+
+//             <div className='flex items-center gap-3 md:gap-5 w-full md:w-1/3 justify-center'>
+
+//                 <div className="flex flex-col items-center cursor-pointer" onClick={handleReverse}>
+//                     <Image src="/icons/reverse.svg" alt="reverse" width={22} height={22} />
+//                     <p className="text-[10px] md:text-xs">-15</p>
+//                 </div>
+
+
+
+//                 {isPlaying ? (
+//                     <Image src='/icons/Pause.svg' alt='Pause button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(pause())} />
+//                 ) : <Image src='/icons/Play.svg' alt='play button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(play())} />
+//                 }
+
+//                 <div className="flex flex-col items-center cursor-pointer" onClick={handleForward}>
+//                     <Image src="/icons/forward.svg" alt="forward" width={22} height={22} />
+//                     <p className="text-[10px] md:text-xs">+15</p>
+//                 </div>
+//             </div>
+
+//             <div className='hidden md:flex items-center gap-3 w-full md:w-1/3 justify-end md:justify-center'>
+//                 <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
+//                 {isMute ? <Image src='/icons/unmute.svg' alt='unmute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(false)} /> :
+//                     <Image src='/icons/mute.svg' alt='mute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(true)} />
+//                 }
+
+
+//                 <div ref={volumeBarRef} className='hidden sm:block bg-gray-700 h-1 w-20 cursor-pointer rounded-lg' onClick={handleVolume}>
+//                     <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
+//                 </div>
+//             </div>
+
+//             <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />
+//         </div>
+//     </div>
+
+// )

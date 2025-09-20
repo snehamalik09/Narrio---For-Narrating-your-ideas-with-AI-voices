@@ -6,6 +6,8 @@ import { useGetPodcastsQuery, useCreatePodcastMutation, useDeletePodcastMutation
 import LoaderSpinner from "@/components/LoaderSpinner";
 import { Edit } from "lucide-react";
 import PodcastDetails from "./podcast/[podcastID]/page";
+import MobileNav from "@/components/MobileNav";
+import Author from "@/models/Author.model";
 
 const Home = () => {
 
@@ -40,8 +42,9 @@ export default Home;
 // Views an podcast count/profile page
 // edit fucntionality
 // generate thumbnail cracked
-// userButton on mobilenav
-// while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
+// // while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
 // when deleting podcast delete attached audio and image
 // playing audio even after the podcast submitted for a few seconds until everything gets cleared
-
+// in similar podcast do not show the current podcast
+// increse totalpodcast count of Author
+// author coming as sneha malik

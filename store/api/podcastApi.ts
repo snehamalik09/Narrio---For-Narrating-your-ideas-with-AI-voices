@@ -49,6 +49,14 @@ export const podcastApi = createApi({
       invalidatesTags: ['Podcast'],
     }),
 
+    uploadThumbnail: builder.mutation<any, string>({
+      query: (imgUrl) => ({
+        url: "upload-thumbnail",   
+        method: "POST",
+        body: { imgUrl },
+      }),
+    }),
+
     getTopPodcasters: builder.query<IAuthor[], void>({
       query: () => 'top-podcasters',
       // providesTags: ['Author'],
@@ -82,4 +90,4 @@ export const podcastApi = createApi({
   }),
 })
 
-export const { useGetPodcastsQuery, useUpdateViewsMutation, useGetProfileByIdQuery, useGetTopPodcastersQuery, useGetPodcastsByAuthorIdQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi
+export const { useGetPodcastsQuery, useUploadThumbnailMutation, useUpdateViewsMutation, useGetProfileByIdQuery, useGetTopPodcastersQuery, useGetPodcastsByAuthorIdQuery, useGetPodcastBySearchQuery, useCreatePodcastMutation, useDeletePodcastMutation, useGetPodcastByIdQuery, useGeneratePodcastMutation, useGenerateThumbnailMutation } = podcastApi

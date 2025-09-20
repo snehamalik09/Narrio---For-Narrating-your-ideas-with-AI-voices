@@ -20,8 +20,9 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
   async function handleFile(e: any) {
     const file = e.target.files[0];
     setImgFile(file);
-    setImgUrl(URL.createObjectURL(file)); //temporary url for preview
+    setImgUrl(URL.createObjectURL(file));
   }
+
 
   async function handleGeneration() {
 
@@ -32,12 +33,11 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
     setIsSubmitting(true);
     try {
       const res = await createThumbnailMutation({ imgPrompt }).unwrap();
-      const imageBase64 = res?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-      console.log('response is : ', imageBase64);
-      if (imageBase64) {
-        setImgFile(null);
-        setImgUrl(imageBase64);
-        toast.success("Thumbnail created");
+      console.log("Thumbnail created : ", res);
+      const img = res?.result?.data?.results[0]?.thumb;
+      if (img) {
+        setImgUrl(img);
+        toast.success("Thumbnail created");        
       }
     }
     catch (err) {
@@ -93,3 +93,34 @@ const GenerateThumbnail: React.FC<IGenerateImageProps> = ({ imgPrompt, setImgPro
 }
 
 export default GenerateThumbnail
+
+
+
+  //OPEN ROUTER - GEMINI API
+  // async function handleGeneration() {
+
+  //   if (!imgPrompt) {
+  //     toast.error("Please add prompt to generate the thumbnail.");
+  //     return;
+  //   }
+  //   setIsSubmitting(true);
+  //   try {
+  //     const res = await createThumbnailMutation({ imgPrompt }).unwrap();
+  //     const imageBase64 = res?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  //     console.log('response is : ', imageBase64);
+  //     if (imageBase64) {
+  //       setImgFile(null);
+  //       setImgUrl(imageBase64);
+  //       toast.success("Thumbnail created");
+  //     }
+  //   }
+  //   catch (err) {
+  //     console.log("Error generating thumbnail", err);
+  //     toast.error("Error generating thumbnail");
+  //   }
+  //   finally {
+  //     setIsSubmitting(false);
+  //   }
+  // }
+
+  //RAPID API
