@@ -14,6 +14,8 @@ import { pause, play } from '@/store/slices/playerSlice';
 import PodcastCard from '@/components/PodcastCard';
 import EmptyState from '@/components/EmptyState';
 import LoaderSpinner from '@/components/LoaderSpinner';
+import { Button } from '@/components/ui/button';
+import { IPodcast } from '@/types';
 
 const Profile = () => {
     const params = useParams();
@@ -24,16 +26,22 @@ const Profile = () => {
     const authorImageUrl = allPocasts?.totalPodcasts[0]?.authorImgUrl;
     const authorName = allPocasts?.totalPodcasts[0]?.author;
     const { data: PodcasterDetails, isLoading: podcasterLoading } = useGetProfileByIdQuery({ id });
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [podcasts, setPodcasts] = useState<IPodcast[]>([]);
+    const [page, setPage] = useState(2);
     const dispatch = useDispatch();
+    const pageLimit = 4;
 
 
     useEffect(() => {
-        console.log("allpodcasts : ", allPocasts);
+        if (allPocasts?.totalPodcasts) {
+            const initialBatch = allPocasts.totalPodcasts.slice(0, pageLimit);
+            setPodcasts(initialBatch);
+            if (allPocasts.totalPodcasts.length <= pageLimit) setHasMore(false);
+        }
     }, [allPocasts]);
 
-    useEffect(() => {
-        console.log("PodcasterDetails : ", PodcasterDetails);
-    }, [PodcasterDetails]);
 
     if (isLoading || podcasterLoading)
         return <LoaderSpinner />
@@ -55,9 +63,24 @@ const Profile = () => {
         }));
     }
 
+    function fetchPodcasts() {
+        if (!allPocasts?.totalPodcasts)
+            return;
+        setLoading(true);
+        const start = (page - 1) * pageLimit;
+        const end = pageLimit + start;
+        const nextBatch = allPocasts.totalPodcasts.slice(start, end);
+        setPodcasts(prev => [...prev, ...nextBatch]);
+        if (end >= allPocasts.totalPodcasts.length) {
+            setHasMore(false);
+        }
+        setPage(prev => prev + 1);
+        setLoading(false);
+    }
+
     return (
         <>
-            <section className="flex flex-col w-full h-min-screen !mt-8 !mb-32 md:!mb-15">
+            <section className="flex flex-col w-full h-min-screen !mt-8">
                 <h1 className="text-20 font-bold"> Podcaster Profile </h1>
 
 
@@ -81,7 +104,7 @@ const Profile = () => {
                         {/* view */}
                         <div className="flex gap-1.5 items-center">
                             <Image src={'/icons/Play.svg'} alt="Play" width={24} height={24} />
-                            <p  className='font-bold'>{PodcasterDetails?.authorDetails?.totalViews}</p>
+                            <p className='font-bold'>{PodcasterDetails?.authorDetails?.totalViews}</p>
                             <p>Plays</p>
                         </div>
 
@@ -132,7 +155,7 @@ const Profile = () => {
                     {allPocasts && allPocasts.totalPodcasts && allPocasts.totalPodcasts.length <= 0 ? <EmptyState title='No podcasts here yet. Explore others while you wait' buttonLink='/discover' search='no' /> :
                         (
                             <div className='podcast_grid'>
-                                {allPocasts?.totalPodcasts?.map((data, index) => {
+                                {podcasts?.map((data, index) => {
                                     return (
                                         <PodcastCard
                                             key={index}
@@ -140,11 +163,35 @@ const Profile = () => {
                                             description={data?.podcastDescription || 'No description available'}
                                             imgUrl={data?.imgUrl || '/fallback-image.png'}
                                             podcastID={data?._id || ''}
-                                        /> )
+                                            author={data?.author}
+                                            audioUrl={data?.audioUrl} audioDuration={data?.audioDuration}
+                                        />)
                                 })}
                             </div>
                         )
                     }
+                    {hasMore &&
+                        <div className="flex justify-center mt-10">
+                            <Button
+                                onClick={fetchPodcasts}
+                                disabled={loading}
+                                className={`
+                                bg-orange/30 text-white font-medium 
+                                px-6 py-2 rounded-md 
+                                border border-white/20
+                                shadow-sm hover:bg-white/10 hover:shadow-md
+                                active:scale-95 transition-all duration-150 cursor-pointer
+                                ${loading ? "opacity-50 cursor-not-allowed" : ""}
+                            `}
+                            >
+                                {loading ? <span className='animate-pulse'>Loading...</span> : "Load More"}
+                            </Button>
+                        </div>
+
+
+
+                    }
+
                 </section>}
 
 

@@ -42,16 +42,16 @@ export default function RootLayout({
 
               <MobileNav />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col md:!pb-[16vh] !pb-[16vh] ">
               <Toaster position='top-center' richColors theme='light' />
               {children}
-              <GlobalPlayer />
             </div>
           </div>
 
         </section>
 
         <RightSideBar />
+        <GlobalPlayer />
       </main>
     </div>
   );

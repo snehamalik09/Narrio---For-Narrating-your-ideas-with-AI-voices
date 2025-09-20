@@ -80,15 +80,18 @@ const GlobalPlayer = () => {
 
     }, [audioDuration]);
 
+    useEffect(() => {
+        if (pathname === '/create-podcast' && isPlaying) {
+            dispatch(pause());
+        }
+    }, [pathname, isPlaying, dispatch]);
+
+    if (pathname === '/create-podcast') return null;
+
+
     if (!title || !audioUrl)
         return null;
 
-    if (pathname === '/create-podcast'){
-        if(isPlaying)
-            dispatch(pause());
-            return null;
-    }
-        
 
     function handleCurrentTime() {
         if (!audioRef.current)
@@ -135,7 +138,7 @@ const GlobalPlayer = () => {
 
         const rect = volumeBarRef.current.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); // clamp 0-1
+        const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); 
 
         audioRef.current.volume = percentage;
         setVolume(percentage);
@@ -143,8 +146,8 @@ const GlobalPlayer = () => {
 
 
     return (
-        <div className="fixed bottom-[60px] md:bottom-0 left-0 w-full z-50 text-white bg-black/70 backdrop-blur-md flex flex-col md:h-auto h-[8vh]">
-            {/* Progress Bar */}
+        <div className="fixed bottom-[60px] md:bottom-0 left-0 w-full z-50 text-white bg-black/70 backdrop-blur-md flex flex-col md:h-[14vh] h-[8vh]">
+
             <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
                 <div
                     className="bg-white h-1"
@@ -156,16 +159,14 @@ const GlobalPlayer = () => {
                 />
             </div>
 
-            {/* Player Controls */}
             <div className="flex flex-row justify-between items-center p-2 md:p-3 gap-2 md:gap-4">
-                {/* Left: Thumbnail & Info */}
                 <div className='flex items-center gap-2 md:gap-3 w-1/3'>
                     <Image
                         src={imgUrl}
                         alt='thumbnail'
                         width={50}
                         height={50}
-                        className="rounded-sm w-[40px] h-[40px] md:w-[70px] md:h-[70px]"
+                        className="rounded-sm w-[40px] h-[40px] md:w-[70px] md:h-[70px] object-cover"
                     />
                     <div className='truncate'>
                         <h2 className='font-bold text-xs md:text-base lg:text-lg truncate'>{title}</h2>
@@ -173,7 +174,7 @@ const GlobalPlayer = () => {
                     </div>
                 </div>
 
-                {/* Center: Play Controls */}
+
                 <div className='flex items-center gap-2 md:gap-4 w-1/3 justify-center'>
                     <div className="flex flex-col items-center cursor-pointer" onClick={() => audioRef.current && (audioRef.current.currentTime -= 15)}>
                         <Image src="/icons/reverse.svg" alt="reverse" width={18} height={18} />
@@ -181,9 +182,9 @@ const GlobalPlayer = () => {
                     </div>
 
                     {isPlaying ? (
-                        <Image src='/icons/Pause.svg' alt='Pause' width={40} height={40} className='cursor-pointer' onClick={() => dispatch(pause())} />
+                        <Image src='/icons/Pause.svg' alt='Pause' width={40} height={40} className='cursor-pointer w-[30px] h-[30px] md:w-[40px] md:h-[40px]' onClick={() => dispatch(pause())} />
                     ) : (
-                        <Image src='/icons/Play.svg' alt='Play' width={40} height={40} className='cursor-pointer' onClick={() => dispatch(play())} />
+                        <Image src='/icons/Play.svg' alt='Play' width={40} height={40} className='cursor-pointer w-[30px] h-[30px] md:w-[40px] md:h-[40px]' onClick={() => dispatch(play())} />
                     )}
 
                     <div className="flex flex-col items-center cursor-pointer" onClick={() => audioRef.current && (audioRef.current.currentTime += 15)}>
@@ -192,7 +193,7 @@ const GlobalPlayer = () => {
                     </div>
                 </div>
 
-                {/* Right: Time & Volume */}
+
                 <div className='hidden md:flex items-center gap-2 md:gap-4 w-1/3 justify-end'>
                     <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
                     {isMute ? (
@@ -211,7 +212,7 @@ const GlobalPlayer = () => {
         </div>
     )
 }
-   
+
 
 
 export default GlobalPlayer

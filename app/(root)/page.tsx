@@ -22,16 +22,17 @@ const Home = () => {
 
     return (
         <>
-            <div className="flex flex-col gap-9 !mb-32 md:!mb-15 ">
+            <div className="flex flex-col gap-9">
                 <h1 className="text-20 font-bold"> Trending Podcasts </h1>
                 <div className='podcast_grid'>
                     {podcastData?.map((data, index) => {
                         return (
-                            <PodcastCard key={data._id} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
+                            <PodcastCard key={data._id} audioUrl={data.audioUrl} audioDuration={data.audioDuration} author={data.author} title={data.podcastTitle} description={data.podcastDescription} imgUrl={data.imgUrl} podcastID={data._id} />
                         )
                     })}
                 </div>
             </div>
+
         </>
     )
 }
@@ -41,5 +42,6 @@ export default Home;
 
 // Views an podcast count/profile page
 // edit fucntionality
-// pagination
 // when deleting podcast delete attached audio and image
+// s trending podcasts
+// add category

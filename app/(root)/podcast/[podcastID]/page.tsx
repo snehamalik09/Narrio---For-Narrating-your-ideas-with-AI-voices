@@ -35,7 +35,7 @@ const PodcastDetails = () => {
     return (
         <>
 
-            <section className="flex flex-col w-full !mb-32 md:!mb-15">
+            <section className="flex flex-col w-full">
                 <header className='mt-9 flex justify-between items-center'>
                     <h1 className="text-20 font-bold"> Currently Playing </h1>
                     <div className='flex justify-between gap-2'>
@@ -74,11 +74,13 @@ const PodcastDetails = () => {
                                 {similarPodcasts?.totalPodcasts?.filter((podcast) => podcast?._id != id).map((data, index) => {
                                     return (
                                         <PodcastCard
-                                            key={data?._id}
+                                            key={index}
                                             title={data?.podcastTitle || 'No Title'}
                                             description={data?.podcastDescription || 'No description available'}
                                             imgUrl={data?.imgUrl || '/fallback-image.png'}
                                             podcastID={data?._id || ''}
+                                            author={data?.author}
+                                            audioUrl={data.audioUrl} audioDuration={data.audioDuration}
                                         />)
                                 })}
                             </div>

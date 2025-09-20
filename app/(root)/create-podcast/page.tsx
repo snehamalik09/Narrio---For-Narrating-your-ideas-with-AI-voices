@@ -271,7 +271,7 @@ const CreatePodcast = () => {
     }
 
     return (
-        <section className="flex flex-col w-full h-min-screen !mb-32 md:!mb-15">
+        <section className="flex flex-col w-full h-min-screen">
             <h1 className="text-20 font-bold"> Create Podcasts </h1>
             <Form {...form}>
                 <form className="flex flex-col w-full pt-10" onSubmit={form.handleSubmit(onSubmit)} >
