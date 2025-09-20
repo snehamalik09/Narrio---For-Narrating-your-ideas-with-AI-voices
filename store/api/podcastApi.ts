@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { IAuthor, IGeneratePodcastProps, IPodcast, AuthorPodcastsResponse } from '@/types';
+import { IAuthor, IGeneratePodcastProps, IPodcast, AuthorPodcastsResponse, AuthorDetailsResponse } from '@/types';
 
 export const podcastApi = createApi({
   reducerPath: 'podcastApi',
@@ -62,7 +62,7 @@ export const podcastApi = createApi({
       // providesTags: ['Author'],
     }), 
 
-    getProfileById: builder.query<IAuthor, {id:String}>({
+    getProfileById: builder.query<AuthorDetailsResponse, {id:String}>({
       query: ({id}) => `profile/${id}`,
     }), 
 

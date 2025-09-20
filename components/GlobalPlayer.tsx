@@ -83,8 +83,12 @@ const GlobalPlayer = () => {
     if (!title || !audioUrl)
         return null;
 
-    if (pathname === '/create-podcast')
-        return null;
+    if (pathname === '/create-podcast'){
+        if(isPlaying)
+            dispatch(pause());
+            return null;
+    }
+        
 
     function handleCurrentTime() {
         if (!audioRef.current)

@@ -31,6 +31,10 @@ const Profile = () => {
         console.log("allpodcasts : ", allPocasts);
     }, [allPocasts]);
 
+    useEffect(() => {
+        console.log("PodcasterDetails : ", PodcasterDetails);
+    }, [PodcasterDetails]);
+
     if (isLoading || podcasterLoading)
         return <LoaderSpinner />
 
@@ -53,7 +57,7 @@ const Profile = () => {
 
     return (
         <>
-            <section className="flex flex-col w-full h-min-screen !mt-8">
+            <section className="flex flex-col w-full h-min-screen !mt-8 !mb-32 md:!mb-15">
                 <h1 className="text-20 font-bold"> Podcaster Profile </h1>
 
 
@@ -75,15 +79,15 @@ const Profile = () => {
                         <h1 className="font-bold text-32 text-white">{authorName}</h1>
 
                         {/* view */}
-                        <div className="flex gap-2.5 items-center">
+                        <div className="flex gap-1.5 items-center">
                             <Image src={'/icons/Play.svg'} alt="Play" width={24} height={24} />
-                            <p>{PodcasterDetails?.totalViews}</p>
+                            <p  className='font-bold'>{PodcasterDetails?.authorDetails?.totalViews}</p>
                             <p>Plays</p>
                         </div>
 
-                        <div className="flex gap-2.5 items-center">
+                        <div className="flex gap-1.5 items-center">
                             <Image src={'/icons/headphone.svg'} alt="headphones" width={24} height={24} />
-                            <p></p>
+                            <p className='font-bold'>{PodcasterDetails?.authorDetails?.podcastCount}</p>
                             <p>Total Podcasts</p>
                         </div>
                     </div>
@@ -131,7 +135,7 @@ const Profile = () => {
                                 {allPocasts?.totalPodcasts?.map((data, index) => {
                                     return (
                                         <PodcastCard
-                                            key={data?._id}
+                                            key={index}
                                             title={data?.podcastTitle || 'No Title'}
                                             description={data?.podcastDescription || 'No description available'}
                                             imgUrl={data?.imgUrl || '/fallback-image.png'}

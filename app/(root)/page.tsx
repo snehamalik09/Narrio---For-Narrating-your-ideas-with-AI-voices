@@ -22,7 +22,7 @@ const Home = () => {
 
     return (
         <>
-            <div className="flex flex-col gap-9">
+            <div className="flex flex-col gap-9 !mb-32 md:!mb-15 ">
                 <h1 className="text-20 font-bold"> Trending Podcasts </h1>
                 <div className='podcast_grid'>
                     {podcastData?.map((data, index) => {
@@ -41,10 +41,5 @@ export default Home;
 
 // Views an podcast count/profile page
 // edit fucntionality
-// generate thumbnail cracked
-// // while fetching all podcast , what if there are more than 50 or 100 podcasts add pagination
+// pagination
 // when deleting podcast delete attached audio and image
-// playing audio even after the podcast submitted for a few seconds until everything gets cleared
-// in similar podcast do not show the current podcast
-// increse totalpodcast count of Author
-// author coming as sneha malik

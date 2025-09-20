@@ -27,7 +27,7 @@ const Discover = () => {
     return (
         <>
             <SearchBar />
-            <section className="flex flex-col w-full h-min-screen !mt-8">
+            <section className="flex flex-col w-full h-min-screen !mt-8 !mb-32 md:!mb-15">
                 <h1 className="text-20 font-bold !mb-8"> Discover Community Podcasts </h1>
 
                 <div className="w-full h-[0.5] min-h-0.5 bg-white !mb-8"></div>

@@ -40,6 +40,10 @@ export interface AuthorPodcastsResponse {
   totalPodcasts: IPodcast[];
 }
 
+export interface AuthorDetailsResponse {
+  authorDetails: IAuthor;
+}
+
 
 export interface IGeneratePodcastProps {
   voicePrompt: string;
