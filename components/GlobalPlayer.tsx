@@ -4,18 +4,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import { RootState } from '@/store/store'
-import { play, pause } from '@/store/slices/playerSlice';
+import { play, pause, stop, setTime } from '@/store/slices/playerSlice';
 import { usePathname } from 'next/navigation';
 import { useUpdateViewsMutation } from '@/store/api/podcastApi';
 
 const GlobalPlayer = () => {
-    const { title, imgUrl, audioUrl, author, audioDuration, isPlaying, podcastID } = useSelector((state: RootState) => state.player);
+    const { title, imgUrl, audioUrl, author, audioDuration, isPlaying, podcastID, currentTime } = useSelector((state: RootState) => state.player);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const playedTime = useRef(0);
     const lastTime = useRef(0);
     const [hasCounted, setHasCounted] = useState(false);
-    const [currentTime, setCurrentTime] = useState('');
     const [totalTime, setTotalTime] = useState(0);
+    const [duration, setDuration] = useState('');
     const [currentSeconds, setCurrentSeconds] = useState(0);
     const [isMute, setIsMute] = useState(false);
     const dispatch = useDispatch();
@@ -27,14 +27,16 @@ const GlobalPlayer = () => {
 
 
     useEffect(() => {
-        if (audioRef.current) {
-            if (isPlaying)
-                audioRef.current.play();
-            else
-                audioRef.current.pause();
-        }
+        if (!audioRef.current) return;
 
-    }, [isPlaying]);
+        audioRef.current.currentTime = currentTime ?? 0;
+
+        if (isPlaying) {
+            audioRef.current.play();
+        } else {
+            audioRef.current.pause();
+        }
+    }, [isPlaying, audioUrl]);
 
     useEffect(() => {
         if (podcastID && audioRef.current && isPlaying) {
@@ -84,7 +86,7 @@ const GlobalPlayer = () => {
         if (pathname === '/create-podcast' && isPlaying) {
             dispatch(pause());
         }
-    }, [pathname, isPlaying, dispatch]);
+    }, [pathname, isPlaying]);
 
     if (pathname === '/create-podcast') return null;
 
@@ -97,12 +99,14 @@ const GlobalPlayer = () => {
         if (!audioRef.current)
             return null;
 
+        dispatch(setTime(audioRef.current.currentTime));
+
         const time = audioRef.current.currentTime;
         setCurrentSeconds(time);
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
         const formatTime = `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-        setCurrentTime(formatTime);
+        setDuration(formatTime);
     };
 
     function handleReverse() {
@@ -138,11 +142,16 @@ const GlobalPlayer = () => {
 
         const rect = volumeBarRef.current.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        const percentage = Math.min(Math.max(clickX / rect.width, 0), 1); 
+        const percentage = Math.min(Math.max(clickX / rect.width, 0), 1);
 
         audioRef.current.volume = percentage;
         setVolume(percentage);
     };
+
+    function handleEnded (){
+        dispatch(stop());
+        updateViews({id:podcastID});
+    }
 
 
     return (
@@ -195,7 +204,7 @@ const GlobalPlayer = () => {
 
 
                 <div className='hidden md:flex items-center gap-2 md:gap-4 w-1/3 justify-end'>
-                    <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
+                    <p className='text-xs md:text-sm'>{duration}/{Number(audioDuration).toFixed(2)}</p>
                     {isMute ? (
                         <Image src='/icons/unmute.svg' alt='unmute' width={20} height={20} className='cursor-pointer' onClick={() => setIsMute(false)} />
                     ) : (
@@ -208,7 +217,7 @@ const GlobalPlayer = () => {
                 </div>
             </div>
 
-            <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />
+            <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={handleEnded} onTimeUpdate={handleCurrentTime} />
         </div>
     )
 }
@@ -216,66 +225,3 @@ const GlobalPlayer = () => {
 
 
 export default GlobalPlayer
-
-
-// return (
-
-//     <div className="text-white fixed bottom-0 left-0 bg-black/40 backdrop-blur-md w-full md:h-auto h-[8vh] flex flex-col z-50 !mb-13 !mt-5 md:!mb-0 md:!mt-0">
-//         <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
-//             <div
-//                 className="bg-white h-1"
-//                 style={{ width: `${(currentSeconds / totalTime) * 100}%` }}
-//             ></div>
-
-//             <div
-//                 className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md"
-//                 style={{ left: `${(currentSeconds / totalTime) * 100}%` }}
-//             ></div>
-//         </div>
-
-//         <div className=" flex md:flex-row justify-between items-center gap-4 p-2 md:p-3">
-//             <div className='flex items-center gap-3 w-full md:w-1/3'>
-//                 <Image src={imgUrl} alt='thubmnail' width={70} height={50} className='' />
-//                 <div className='font-bold text-sm md:text-base truncate max-w-[120px] md:max-w-[200px]'>
-//                     <h2 className='font-bold text-14'>{title}</h2>
-//                     <p className='text-12'>{author}</p>
-//                 </div>
-//             </div>
-
-//             <div className='flex items-center gap-3 md:gap-5 w-full md:w-1/3 justify-center'>
-
-//                 <div className="flex flex-col items-center cursor-pointer" onClick={handleReverse}>
-//                     <Image src="/icons/reverse.svg" alt="reverse" width={22} height={22} />
-//                     <p className="text-[10px] md:text-xs">-15</p>
-//                 </div>
-
-
-
-//                 {isPlaying ? (
-//                     <Image src='/icons/Pause.svg' alt='Pause button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(pause())} />
-//                 ) : <Image src='/icons/Play.svg' alt='play button' width={45} height={45} className='cursor-pointer' onClick={() => dispatch(play())} />
-//                 }
-
-//                 <div className="flex flex-col items-center cursor-pointer" onClick={handleForward}>
-//                     <Image src="/icons/forward.svg" alt="forward" width={22} height={22} />
-//                     <p className="text-[10px] md:text-xs">+15</p>
-//                 </div>
-//             </div>
-
-//             <div className='hidden md:flex items-center gap-3 w-full md:w-1/3 justify-end md:justify-center'>
-//                 <p className='text-xs md:text-sm'>{currentTime}/{Number(audioDuration).toFixed(2)}</p>
-//                 {isMute ? <Image src='/icons/unmute.svg' alt='unmute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(false)} /> :
-//                     <Image src='/icons/mute.svg' alt='mute' width={25} height={25} className='cursor-pointer' onClick={() => setIsMute(true)} />
-//                 }
-
-
-//                 <div ref={volumeBarRef} className='hidden sm:block bg-gray-700 h-1 w-20 cursor-pointer rounded-lg' onClick={handleVolume}>
-//                     <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
-//                 </div>
-//             </div>
-
-//             <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={() => dispatch(pause())} onTimeUpdate={handleCurrentTime} />
-//         </div>
-//     </div>
-
-// )

@@ -29,7 +29,8 @@ const PodcastCard = ({ author, title, description, imgUrl, podcastID, audioDurat
       audioUrl,
       imgUrl,
       author,
-      audioDuration
+      audioDuration,
+      currentTime:0
     }));
   }
   const { isPlaying, podcastID: pID } = useSelector((state: RootState) => state.player)
@@ -43,7 +44,7 @@ const PodcastCard = ({ author, title, description, imgUrl, podcastID, audioDurat
 
   return (
     <div
-      className='group perspective  w-full max-w-[180px] sm:max-w-[200px] h-[165px] 2xl:w-[200px] 2xl:h-[200px] cursor-pointer'
+      className='group perspective  w-full max-w-[180px] sm:max-w-[180px] h-[165px] 2xl:w-[190px] 2xl:h-[190px] cursor-pointer'
       onClick={handleViews}
     >
       <div className={` ${flipped?'rotate-y-180' : '' } relative w-full h-full transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180`}>

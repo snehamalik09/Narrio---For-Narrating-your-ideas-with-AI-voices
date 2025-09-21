@@ -70,7 +70,8 @@ const PodcastDetailPlayer = ({ podcastThumbnail, podcastTitle, audioDuration, au
       audioUrl,
       imgUrl: podcastThumbnail,
       author: authorName,
-      audioDuration
+      audioDuration,
+      currentTime:0,
     }));
   }
 

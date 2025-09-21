@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useGetTopPodcastersQuery } from "@/store/api/podcastApi";
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -30,11 +30,11 @@ const TopPodcasters = () => {
 
               <div className="flex flex-col flex-1 min-w-0"> 
                 <h1 className="text-12 font-bold truncate">{data.username}</h1>
-                <p className="text-xs font-normal">{data.podcastCount} podcasts</p>
+                <p className="text-xs font-normal">{data.podcastCount} Podcasts</p>
               </div>
 
               <p className="text-12 font-normal text-gray-300 shrink-0">
-                {data.totalViews} Views
+                {data.totalViews} Plays
               </p>
             </figure>
 

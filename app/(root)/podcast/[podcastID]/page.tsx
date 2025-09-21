@@ -80,7 +80,7 @@ const PodcastDetails = () => {
                                             imgUrl={data?.imgUrl || '/fallback-image.png'}
                                             podcastID={data?._id || ''}
                                             author={data?.author}
-                                            audioUrl={data.audioUrl} audioDuration={data.audioDuration}
+                                            audioUrl={data?.audioUrl} audioDuration={data?.audioDuration}
                                         />)
                                 })}
                             </div>

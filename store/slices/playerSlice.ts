@@ -9,6 +9,7 @@ const initialState: PlayerState = {
   isPlaying: false,
   author: "",
   audioDuration: null,
+  currentTime:0,
 };
 
 const playerSlice = createSlice({
@@ -24,6 +25,7 @@ const playerSlice = createSlice({
         audioUrl: string;
         author?: string;
         audioDuration?: number | null;
+        currentTime: number
       }>
     ) => {
       state.podcastID = action.payload.podcastID;
@@ -33,12 +35,16 @@ const playerSlice = createSlice({
       state.author = action.payload.author ?? "";
       state.audioDuration = action.payload.audioDuration ?? null;
       state.isPlaying = true;
+      state.currentTime=0;
     },
     play: (state) => {
       state.isPlaying = true;
     },
     pause: (state) => {
       state.isPlaying = false;
+    },
+    setTime: (state, action:PayloadAction<number>) => {
+      state.currentTime = action.payload;
     },
     stop: (state) => {
       state.podcastID = "";
@@ -48,9 +54,10 @@ const playerSlice = createSlice({
       state.isPlaying = false;
       state.author = "";
       state.audioDuration = null;
+      state.currentTime=0;
     },
   },
 });
 
-export const { setPodcast, play, pause, stop } = playerSlice.actions;
+export const { setPodcast, play, pause, stop, setTime } = playerSlice.actions;
 export default playerSlice.reducer;

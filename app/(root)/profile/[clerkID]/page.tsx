@@ -60,6 +60,7 @@ const Profile = () => {
             imgUrl: firstPodcast.imgUrl,
             author: firstPodcast.author,
             audioDuration: firstPodcast.audioDuration,
+            currentTime:0
         }));
     }
 

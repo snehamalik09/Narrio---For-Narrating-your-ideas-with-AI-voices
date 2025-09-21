@@ -61,7 +61,6 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Podcast not found" }, { status: 404 });
     }
 
-    const authorID = updatedPodcast.authorID;
     const updatedAuthor = await Author.findOneAndUpdate({clerkID:updatedPodcast.authorID}, { $inc : {totalViews:1}}, {new:true});
 
 
