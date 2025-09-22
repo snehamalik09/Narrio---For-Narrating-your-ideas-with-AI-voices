@@ -30,7 +30,8 @@ const PodcastCard = ({ author, title, description, imgUrl, podcastID, audioDurat
       imgUrl,
       author,
       audioDuration,
-      currentTime:0
+      currentTime:0,
+      isExpanded:false
     }));
   }
   const { isPlaying, podcastID: pID } = useSelector((state: RootState) => state.player)
@@ -83,4 +84,4 @@ const PodcastCard = ({ author, title, description, imgUrl, podcastID, audioDurat
   )
 }
 
-export default PodcastCard
+export default React.memo(PodcastCard);

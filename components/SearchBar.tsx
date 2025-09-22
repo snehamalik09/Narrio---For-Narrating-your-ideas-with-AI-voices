@@ -34,7 +34,6 @@ const SearchBar = () => {
 
     function handleSearch(query:string) {
             router.push(`/discover/?search=${query}`);
-
     }
 
     const debouncedSearchRef = useRef(debounce(handleSearch, 500));
@@ -51,12 +50,4 @@ const SearchBar = () => {
 export default SearchBar
 
 
-    // function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    //     if (event.key === 'Enter') {
-    //         if (search)
-    //             router.push(`/discover/?search=${search}`);
-    //         else if (!search && pathname === '/discover')
-    //             router.push(`/discover`);
-    //         setSearch('');
-    //     }
-    // }
+    

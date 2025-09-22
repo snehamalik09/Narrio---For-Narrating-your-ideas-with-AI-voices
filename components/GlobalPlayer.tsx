@@ -4,9 +4,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Image from 'next/image'
 import { RootState } from '@/store/store'
-import { play, pause, stop, setTime } from '@/store/slices/playerSlice';
+import { play, pause, stop, setTime, toggleExpand } from '@/store/slices/playerSlice';
 import { usePathname } from 'next/navigation';
 import { useUpdateViewsMutation } from '@/store/api/podcastApi';
+import { GoScreenFull } from "react-icons/go";
+import FullScreenPlayer from './FullScreenPlayer';
+
 
 const GlobalPlayer = () => {
     const { title, imgUrl, audioUrl, author, audioDuration, isPlaying, podcastID, currentTime } = useSelector((state: RootState) => state.player);
@@ -149,14 +152,17 @@ const GlobalPlayer = () => {
     };
 
     function handleEnded (){
-        dispatch(stop());
         updateViews({id:podcastID});
     }
 
+    const isExpanded=true;
+
 
     return (
-        <div className="fixed bottom-[60px] md:bottom-0 left-0 w-full z-50 text-white bg-black/70 backdrop-blur-md flex flex-col md:h-[14vh] h-[8vh]">
-
+        <>
+        {isExpanded &&  <FullScreenPlayer/>}
+        <div className="fixed bottom-[60px] md:bottom-0 left-0 w-full z-[1000] text-white bg-black/70 backdrop-blur-md flex flex-col md:h-[14vh] h-[8vh]">
+            
             <div ref={progressBarRef} className="w-full bg-gray-700 h-1 relative cursor-pointer" onClick={handleSeek}>
                 <div
                     className="bg-white h-1"
@@ -215,10 +221,14 @@ const GlobalPlayer = () => {
                         <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
                     </div>
                 </div>
+                <div className='cursor-pointer' onClick={() => dispatch(toggleExpand())}>
+                    <GoScreenFull size={24} /> 
+                </div>
             </div>
 
             <audio ref={audioRef} src={audioUrl} className='hidden' onEnded={handleEnded} onTimeUpdate={handleCurrentTime} />
         </div>
+        </>
     )
 }
 

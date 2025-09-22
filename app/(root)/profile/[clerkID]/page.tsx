@@ -16,6 +16,7 @@ import EmptyState from '@/components/EmptyState';
 import LoaderSpinner from '@/components/LoaderSpinner';
 import { Button } from '@/components/ui/button';
 import { IPodcast } from '@/types';
+import PodcastSkeleton from '@/components/PodcastSkeleton';
 
 const Profile = () => {
     const params = useParams();
@@ -31,6 +32,7 @@ const Profile = () => {
     const [podcasts, setPodcasts] = useState<IPodcast[]>([]);
     const [page, setPage] = useState(2);
     const dispatch = useDispatch();
+    const router = useRouter();
     const pageLimit = 4;
 
 
@@ -43,8 +45,12 @@ const Profile = () => {
     }, [allPocasts]);
 
 
-    if (isLoading || podcasterLoading)
+    if (podcasterLoading)
         return <LoaderSpinner />
+
+    function handleViews(podcastID: string) {
+        router.push(`/podcast/${podcastID}`, { 'scroll': true });
+    }
 
     async function handlePlayPodcast() {
         const firstPodcast = allPocasts?.totalPodcasts?.[0];
@@ -60,7 +66,8 @@ const Profile = () => {
             imgUrl: firstPodcast.imgUrl,
             author: firstPodcast.author,
             audioDuration: firstPodcast.audioDuration,
-            currentTime:0
+            currentTime: 0,
+            isExpanded:false
         }));
     }
 
@@ -150,27 +157,41 @@ const Profile = () => {
                 <div className="w-full h-[0.5] min-h-0.5 bg-white/40 !mt-3 !mb-6"></div>
 
 
-                {<section className='flex flex-col gap-5 !mb-20'>
+                <section className='flex flex-col gap-5 !mb-20'>
                     <h1 className='text-20 text-white font-bold'>All Podcasts</h1>
 
-                    {allPocasts && allPocasts.totalPodcasts && allPocasts.totalPodcasts.length <= 0 ? <EmptyState title='No podcasts here yet. Explore others while you wait' buttonLink='/discover' search='no' /> :
-                        (
-                            <div className='podcast_grid'>
-                                {podcasts?.map((data, index) => {
-                                    return (
-                                        <PodcastCard
-                                            key={index}
-                                            title={data?.podcastTitle || 'No Title'}
-                                            description={data?.podcastDescription || 'No description available'}
-                                            imgUrl={data?.imgUrl || '/fallback-image.png'}
-                                            podcastID={data?._id || ''}
-                                            author={data?.author}
-                                            audioUrl={data?.audioUrl} audioDuration={data?.audioDuration}
-                                        />)
-                                })}
-                            </div>
-                        )
-                    }
+                    {allPocasts && allPocasts.totalPodcasts && allPocasts.totalPodcasts.length <= 0 ? (
+                        <EmptyState
+                            title="No podcasts here yet. Explore others while you wait"
+                            buttonLink="/discover"
+                            search="no"
+                        />
+                    ) : (
+                        <div className="podcast_grid">
+                          {
+                                allPocasts?.totalPodcasts?.map((data, index) => (
+                                    <figure
+                                        key={index}
+                                        className="flex flex-col gap-2 cursor-pointer w-[150px]"
+                                        onClick={() => handleViews(data._id)}
+                                    >
+                                        <Image
+                                            alt="thumbnail"
+                                            src={data.imgUrl}
+                                            width={150}
+                                            height={150}
+                                            className="aspect-square rounded-lg object-cover"
+                                        />
+                                        <div className="w-full">
+                                            <h1 className="text-14 font-bold truncate">{data.podcastTitle}</h1>
+                                            <h1 className="text-12 truncate">{data.author}</h1>
+                                        </div>
+                                    </figure>
+                                ))}
+                        </div>
+                    )}
+
+
                     {hasMore &&
                         <div className="flex justify-center mt-10">
                             <Button
@@ -188,12 +209,9 @@ const Profile = () => {
                                 {loading ? <span className='animate-pulse'>Loading...</span> : "Load More"}
                             </Button>
                         </div>
-
-
-
                     }
 
-                </section>}
+                </section>
 
 
             </section>

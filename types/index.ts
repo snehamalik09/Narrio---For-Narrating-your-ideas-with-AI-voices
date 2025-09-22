@@ -74,4 +74,5 @@ export interface PlayerState{
     author: string;
     audioDuration:number|null;
     currentTime: number;
+    isExpanded:boolean;
 }

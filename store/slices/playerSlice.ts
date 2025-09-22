@@ -10,6 +10,7 @@ const initialState: PlayerState = {
   author: "",
   audioDuration: null,
   currentTime:0,
+  isExpanded:false
 };
 
 const playerSlice = createSlice({
@@ -26,6 +27,7 @@ const playerSlice = createSlice({
         author?: string;
         audioDuration?: number | null;
         currentTime: number
+        isExpanded:boolean
       }>
     ) => {
       state.podcastID = action.payload.podcastID;
@@ -36,6 +38,7 @@ const playerSlice = createSlice({
       state.audioDuration = action.payload.audioDuration ?? null;
       state.isPlaying = true;
       state.currentTime=0;
+      state.isExpanded=false;
     },
     play: (state) => {
       state.isPlaying = true;
@@ -56,8 +59,14 @@ const playerSlice = createSlice({
       state.audioDuration = null;
       state.currentTime=0;
     },
+    toggleExpand: (state) => {
+      state.isExpanded = !state.isExpanded;
+    },
+    closePlayer: (state) => {
+      state.isExpanded = false;
+    },
   },
 });
 
-export const { setPodcast, play, pause, stop, setTime } = playerSlice.actions;
+export const { setPodcast, play, pause, stop, setTime, toggleExpand, closePlayer } = playerSlice.actions;
 export default playerSlice.reducer;
