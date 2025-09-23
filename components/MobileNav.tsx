@@ -12,7 +12,7 @@ const MobileNav = () => {
   const { user } = useUser();
 
   return (
-    <div className="fixed bottom-0 left-0 h-[60px] w-full bg-black/80 backdrop-blur-lg border-t border-gray-800 z-50 md:hidden">
+    <div className="fixed bottom-0 left-0 h-[60px] w-full bg-black/80 backdrop-blur-lg border-t border-gray-800 z-[1000] md:hidden">
       <div className="flex justify-around items-center py-2">
         {navItems.map((item) => {
           const href = item.name === "My Profile" ? `/profile/${user?.id}` : item.href;

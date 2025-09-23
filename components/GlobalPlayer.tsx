@@ -174,8 +174,8 @@ const GlobalPlayer = () => {
                 />
             </div>
 
-            <div className="flex flex-row justify-between items-center p-2 md:p-3 gap-2 md:gap-4">
-                <div className='flex items-center gap-2 md:gap-3 w-1/3'>
+            <div className="flex flex-row justify-between items-center p-2 md:p-3 gap-2 md:gap-4 cursor-pointer"  >
+                <div className='flex items-center gap-2 md:gap-3 w-1/3' onClick={() => dispatch(toggleExpand())}>
                     <Image
                         src={imgUrl}
                         alt='thumbnail'
@@ -221,7 +221,7 @@ const GlobalPlayer = () => {
                         <div className='bg-white h-1 w-full rounded-lg' style={{ width: `${volume * 100}%` }}></div>
                     </div>
                 </div>
-                <div className='cursor-pointer' onClick={() => dispatch(toggleExpand())}>
+                <div className='cursor-pointer' onClick={() => dispatch(toggleExpand())} >
                     <GoScreenFull size={24} /> 
                 </div>
             </div>
