@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   await connectDB();
 
   try {
-    const authorDetails = await Author.findOne({ clerkID: params.id });
+    const authorDetails = await Author.findOne({ clerkID: params.id, role:"author" });
     if (!authorDetails) {
       return NextResponse.json({ error: "Author not found" }, { status: 404 });
     }

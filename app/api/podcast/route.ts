@@ -32,7 +32,15 @@ export async function POST(req: Request) {
       authorImgUrl: user.imageUrl || "",
     });
 
-    await addAuthor(user, newPodcast._id); 
+    await Author.findOneAndUpdate(
+      { clerkId: user.id },
+      {
+        $set: { role: "author" },
+        $inc: { podcastCount: 1 },
+        $push: { podcasts: newPodcast._id }
+      },
+      { new: true }
+    );
     return NextResponse.json(newPodcast, { status: 201 });
   } catch (error) {
     console.error("Error creating podcast:", error);
@@ -76,22 +84,26 @@ export async function PATCH(req: Request) {
 
 
 
-async function addAuthor(user: any, podcastId: string) {
-  const author = await Author.findOne({ clerkID: user.id });
+// async function addAuthor(user: any, podcastId: string) {
+//   const author = await Author.findOne({ clerkID: user.id });
 
-  if (author) {
-    await Author.findOneAndUpdate(
-      { clerkID: user.id },
-      { $inc: { podcastCount: 1 }, $push: { podcasts: podcastId } },
-      { new: true }
-    );
-  } else {
-    await Author.create({
-      clerkID: user.id,
-      username: user.fullName,
-      email: user.primaryEmailAddress?.emailAddress || "",
-      imgUrl: user.imageUrl,
-      podcasts: [podcastId],
-    });
-  }
-}
+//   if (author) {
+//     await Author.findOneAndUpdate(
+//       { clerkID: user.id },
+//       {
+//         $set: { role: "author" },
+//         $inc: { podcastCount: 1 },
+//         $push: { podcasts: podcastId },
+//       },
+//       { new: true }
+//     );
+//   }  else {
+//     await Author.create({
+//       clerkID: user.id,
+//       username: user.fullName,
+//       email: user.primaryEmailAddress?.emailAddress || "",
+//       imgUrl: user.imageUrl,
+//       podcasts: [podcastId],
+//     });
+//   }
+// }

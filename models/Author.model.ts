@@ -1,6 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { IAuthor } from "@/types";
-import Podcast from "./Podcast.model";
+
+export enum UserRole {
+  LISTENER = "listener",
+  AUTHOR = "author",
+}
 
 const AuthorSchema: Schema = new Schema({
   clerkID: { type: String, required: true, unique: true }, 
@@ -12,6 +16,11 @@ const AuthorSchema: Schema = new Schema({
   podcasts:[
     { type: Schema.Types.ObjectId, ref: "Podcast"}
   ],
+  role: {
+      type: String,
+      enum: Object.values(UserRole),
+      default: UserRole.LISTENER,
+    },
 }, { timestamps: true });
 
 const Author: Model<IAuthor> = mongoose.models.Author || mongoose.model("Author", AuthorSchema);

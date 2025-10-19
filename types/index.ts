@@ -34,6 +34,7 @@ export interface IAuthor extends Document {
   totalViews: number;
   podcastCount:number;
   podcasts: [mongoose.Schema.Types.ObjectId];
+  role:"listener" | "author";
 }
 
 export interface AuthorPodcastsResponse {

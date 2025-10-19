@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import User from "@/models/User.model";
 import { connectDB } from "@/lib/mongodb";
+import mongoose from "mongoose";
 
 export async function GET({params}:{params : {id:string}}) {
   await connectDB()
   try {
-    const user = await User.findById(params.id);
+    const user = await User.findOne( {_id: new mongoose.Types.ObjectId(params.id), role:"author"});
     if(!user)
         return NextResponse.json({error:'User not found'}, {status:404});
     return NextResponse.json(User);

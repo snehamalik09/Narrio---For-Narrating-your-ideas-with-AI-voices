@@ -5,7 +5,7 @@ import { connectDB } from "@/lib/mongodb";
 export async function GET() {
   await connectDB()
   try {
-    const topAuthors = await Author.find({}).sort({totalViews:-1});
+    const topAuthors = await Author.find({role:"author"}).sort({totalViews:-1});
     console.log("top authors : ", topAuthors);
     return NextResponse.json(topAuthors);
   } catch (error) {
