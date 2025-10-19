@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
             await connectDB();
 
             const emailAddress =
-                evt.data.email_addresses?.[0]?.email_address || 
-                evt.data.primary_email_address_id;  
+                evt.data.email_addresses?.[0]?.email_address ||
+                `${evt.data.primary_email_address_id}@example.com`;
             const name = `${evt.data.first_name || ''} ${evt.data.last_name || ''}`.trim() || "Unknown";
 
             const existingUser = await Author.findOne({ clerkId: evt.data.id });
