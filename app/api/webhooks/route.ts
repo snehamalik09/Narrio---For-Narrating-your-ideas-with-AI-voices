@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     if (evt.type === "user.created" && evt.data) {
       console.log("Processing user.created event for ID:", evt.data.id);
 
-      const emailAddress = evt.data.email_addresses?.[0]?.email_address;
+      const emailAddress = evt.data.email_addresses?.[0]?.email_address || evt.data.primary_email_address_id || "no-email@clerk.dev";
       if (!emailAddress) {
         console.error("Email not found for user:", evt.data.id);
         throw new Error("Email not found");
@@ -25,12 +25,12 @@ export async function POST(req: NextRequest) {
       await connectDB();
       console.log("Database connected");
 
-      const existingUser = await Author.findOne({ clerkId: evt.data.id });
+      const existingUser = await Author.findOne({ clerkID: evt.data.id });
       if (existingUser) {
         console.log("User already exists in database:", existingUser?.clerkID);
       } else {
         const newUser = await Author.create({
-          clerkId: evt.data.id,
+          clerkID: evt.data.id,
           username: name,
           email: emailAddress,
           imgUrl: evt.data.image_url,
