@@ -12,9 +12,16 @@ import {
     UserButton
 } from '@clerk/nextjs'
 import EmblaCarousel from "./EmblaCarousel";
+import { useUser } from '@clerk/nextjs';
+import { useEffect } from "react";
 
 const RightSideBar = () => {
-    const { data: podcastData, isLoading, error, refetch } = useGetTopPodcastersQuery()
+    const { data: podcastData, isLoading, error, refetch } = useGetTopPodcastersQuery();
+    const { isSignedIn, user, isLoaded } = useUser();
+
+    useEffect(()=>{
+        console.log('podcast data rightsidebar : ', podcastData);
+    }, [podcastData]);
 
     return (
         <>
@@ -34,24 +41,28 @@ const RightSideBar = () => {
 
                     </div>
 
-                    <div className="flex justify-between text-16 gap-2 md:gap-4 font-bold">
-                        <p>Fans Also Like</p>
-                        <Link href='/discover'>
-                            <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
-                        </Link>
-                    </div>
+                    {isSignedIn &&
+                        <>
+                            <div className="flex justify-between text-16 gap-2 md:gap-4 font-bold ">
+                                <p>Fans Also Like</p>
+                                <Link href='/discover'>
+                                    <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
+                                </Link>
+                            </div>
 
-                    <EmblaCarousel fansLikeDetails={podcastData ?? []} />
+                            <EmblaCarousel fansLikeDetails={podcastData ?? []} />
 
-                    <div className="flex flex-col text-16 justify-between gap-2 md:gap-4 font-bold">
-                        <div className="flex justify-between">
-                            <p>Top Podcasters</p>
-                            <Link href='/discover'>
-                                <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
-                            </Link>
-                        </div>
-                        <TopPodcasters />
-                    </div>
+                            <div className="flex flex-col text-16 justify-between gap-2 md:gap-4 font-bold">
+                                <div className="flex justify-between">
+                                    <p>Top Podcasters</p>
+                                    <Link href='/discover'>
+                                        <button className="text-orange-500 font-semibold cursor-pointer active:scale-95">See All</button>
+                                    </Link>
+                                </div>
+                                <TopPodcasters />
+                            </div>
+                        </>
+                    }
                 </nav>
             </section>
         </>
